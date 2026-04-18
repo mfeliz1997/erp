@@ -62,7 +62,7 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
             {filteredInvoices.length === 0 ? (
                <TableRow>
                  <TableCell colSpan={6} className="h-48 text-center text-xs font-black uppercase text-gray-400 italic">
-                    Sin registros de venta encontrados
+                   Sin registros de venta encontrados
                  </TableCell>
                </TableRow>
             ) : (
@@ -98,16 +98,19 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                       >
                         <Eye className="w-5 h-5 text-gray-400 hover:text-black" />
                       </button>
+                      
+                      {/* FIX APLICADO AQUÍ (Desktop) 👇 */}
                       <PrintTicketButton 
                         invoiceData={{
                           total: inv.total,
-                          items: inv.invoice_items.map((i: any) => ({ 
+                          items: inv.invoice_items?.map((i: any) => ({ 
                             name: i.product_name, 
                             price: i.unit_price,
                             quantity: i.quantity 
-                          }))
+                          })) || []
                         }} 
                       />
+                      
                       <WhatsappShareButton 
                         invoiceId={inv.id}
                         phone={""}
@@ -167,16 +170,19 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                  </div>
                  
                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    
+                    {/* FIX APLICADO AQUÍ (Móvil) 👇 */}
                     <PrintTicketButton 
                       invoiceData={{
                         total: inv.total,
-                        items: inv.invoice_items.map((i: any) => ({ 
+                        items: inv.invoice_items?.map((i: any) => ({ 
                           name: i.product_name, 
                           price: i.unit_price,
                           quantity: i.quantity 
-                        }))
+                        })) || []
                       }} 
                     />
+
                     <WhatsappShareButton 
                       invoiceId={inv.id}
                       phone={""}
