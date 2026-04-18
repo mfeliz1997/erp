@@ -87,7 +87,7 @@ export function useThermalPrinter() {
         .codepage('cp850')
         .align('center')
         .size('double')
-        .text('BERAL ERP')
+        .text('INVENZA ERP')
         .newline()
         .size('normal')
         .text('--- TICKET DE VENTA ---')

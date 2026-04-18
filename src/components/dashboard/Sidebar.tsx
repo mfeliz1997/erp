@@ -64,7 +64,7 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
       <div className="p-6 border-b-2 border-black flex items-center justify-between min-h-[100px]">
         {!isCollapsed || mobile ? (
           <div className="overflow-hidden">
-            <h2 className="font-black text-xl uppercase tracking-tighter truncate">{tenantName || 'BERAL'}</h2>
+            <h2 className="font-black text-xl uppercase tracking-tighter truncate">{tenantName || 'INVENZA'}</h2>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate mt-1">👤 {userName}</p>
           </div>
         ) : (

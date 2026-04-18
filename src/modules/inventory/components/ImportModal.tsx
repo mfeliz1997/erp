@@ -25,7 +25,7 @@ export function ImportModal() {
              </div>
              <DialogTitle className="text-4xl font-black uppercase tracking-tighter leading-none">Importación Inteligente</DialogTitle>
              <DialogDescription className="text-zinc-500 font-medium text-xs mt-2">
-               Sube tu CSV y deja que Beral AI mapee tus productos automáticamente.
+               Sube tu CSV y deja que Invenza AI mapee tus productos automáticamente.
              </DialogDescription>
            </div>
            <div className="hidden md:block bg-black text-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em]">

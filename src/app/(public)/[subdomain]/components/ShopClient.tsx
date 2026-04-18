@@ -45,7 +45,7 @@ export function ShopClient({ products, tenant }: { products: any[], tenant: any 
                 <span className="font-bold uppercase tracking-tight">{tenant.name}</span>
             </div>
             <p className="text-gray-400 text-xs font-medium uppercase tracking-widest">
-                Powered by Beral ERP &copy; {new Date().getFullYear()}
+                Powered by Invenza ERP &copy; {new Date().getFullYear()}
             </p>
           </div>
         </footer>

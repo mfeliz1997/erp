@@ -9,7 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: 'Beral ERP',
+  title: 'Invenza ERP',
   description: 'Sistema de Gestión Multi-tenant y Facturación', // Facturación DGII (Oculto en MVP Lite)
 };
 

@@ -83,7 +83,7 @@ export default function IntegrationsForm({ tenant }: { tenant: any }) {
 
         <div className="bg-amber-50 p-4 border-l-4 border-amber-500">
            <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest leading-relaxed">
-             💡 TIP: Si dejas los campos vacíos, usaremos el número oficial de BERAL para el envío de notificaciones.
+             💡 TIP: Si dejas los campos vacíos, usaremos el número oficial de INVENZA para el envío de notificaciones.
            </p>
         </div>
 

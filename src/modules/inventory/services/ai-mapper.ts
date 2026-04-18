@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function suggestMapping(userColumns: string[]) {
-  const beralFields = [
+  const invenzaFields = [
     { key: 'name', label: 'Nombre' },
     { key: 'description', label: 'Descripción' },
     { key: 'cost_price', label: 'Costo' },
@@ -13,7 +13,7 @@ export async function suggestMapping(userColumns: string[]) {
     { key: 'category', label: 'Categoría' }
   ];
 
-  const fieldList = beralFields.map(f => f.key).join(', ');
+  const fieldList = invenzaFields.map(f => f.key).join(', ');
   
   const prompt = `Actúa como experto en datos. Tengo estas columnas de un archivo de inventario: ${userColumns.join(', ')}. 
   Necesito mapearlas a mis campos de base de datos: ${fieldList}.

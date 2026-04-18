@@ -35,7 +35,7 @@ export async function proxy(request: NextRequest) {
 
   // Lógica de Subdominios para Catálogo Público
   const baseDomain =
-    process.env.NODE_ENV === "production" ? "beral.do" : "localhost:3000";
+    process.env.NODE_ENV === "production" ? "invenza.do" : "localhost:3000";
   const currentHost = hostname.replace(`.${baseDomain}`, "");
 
   // Protección de ERP

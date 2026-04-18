@@ -18,7 +18,7 @@ export function PrintTicketButton({ invoice, invoiceData, tenant }: PrintTicketB
   
   const handlePrint = async () => {
     // Obtenemos la config de localStorage (donde Settings la guardó)
-    const savedConfig = localStorage.getItem('beral-printer-config');
+    const savedConfig = localStorage.getItem('invenza-printer-config');
     const config = savedConfig ? JSON.parse(savedConfig) : { method: 'network', width: '80mm' };
 
     await print(config, data);

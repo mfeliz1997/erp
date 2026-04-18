@@ -25,14 +25,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Baja Fricción: Cargar carrito guardado al montar la app
   useEffect(() => {
     setIsMounted(true);
-    const savedCart = localStorage.getItem('beral_pos_cart');
+    const savedCart = localStorage.getItem('invenza_pos_cart');
     if (savedCart) setCart(JSON.parse(savedCart));
   }, []);
 
   // Guardar automáticamente en LocalStorage cada vez que cambie el carrito
   useEffect(() => {
     if (isMounted) {
-      localStorage.setItem('beral_pos_cart', JSON.stringify(cart));
+      localStorage.setItem('invenza_pos_cart', JSON.stringify(cart));
     }
   }, [cart, isMounted]);
 

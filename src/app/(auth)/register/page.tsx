@@ -15,7 +15,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-black tracking-tight text-gray-900">Crear Negocio</h1>
-          <p className="text-gray-500 mt-2">Prueba Beral gratis por 14 días.</p>
+          <p className="text-gray-500 mt-2">Prueba Invenza gratis por 14 días.</p>
         </div>
 
         {/* Aquí se mostrarán los errores correctamente ahora */}

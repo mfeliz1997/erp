@@ -95,7 +95,7 @@ export default function WebsiteSettingsForm({ tenant }: { tenant: any }) {
                   className="flex-1 h-14 px-4 border-2 border-black rounded-none font-black text-lg focus:outline-none placeholder:text-gray-100"
                 />
               </div>
-              <span className="text-black font-black text-xs uppercase italic">.BERAL.DO</span>
+              <span className="text-black font-black text-xs uppercase italic">.INVENZA.DO</span>
             </div>
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Tus clientes usarán este enlace para ver tus productos y hacer pedidos.</p>
           </div>

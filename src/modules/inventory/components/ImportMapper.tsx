@@ -11,7 +11,7 @@ import { Upload, FileSpreadsheet, Sparkles, Loader2, CheckCircle2, ArrowRight } 
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const BERAL_FIELDS = [
+const INVENZA_FIELDS = [
   { key: "name", label: "Nombre", required: true },
   { key: "description", label: "Descripción", required: false },
   { key: "cost_price", label: "Costo", required: false },
@@ -60,7 +60,7 @@ export function ImportMapper() {
   };
 
   const handleImport = async () => {
-    const missing = BERAL_FIELDS.filter(f => f.required && !mapping[f.key]);
+    const missing = INVENZA_FIELDS.filter(f => f.required && !mapping[f.key]);
     if (missing.length > 0) {
       toast.error(`Mapea los campos obligatorios: ${missing.map(m => m.label).join(", ")}`);
       return;
@@ -70,7 +70,7 @@ export function ImportMapper() {
     
     const transformed = fileData.map(row => {
       const p: any = {};
-      BERAL_FIELDS.forEach(f => {
+      INVENZA_FIELDS.forEach(f => {
         p[f.key] = mapping[f.key] ? row[mapping[f.key]] : null;
       });
       return p;
@@ -136,13 +136,13 @@ export function ImportMapper() {
             <Table>
               <TableHeader className="bg-zinc-50 border-b-2 border-zinc-100">
                 <TableRow>
-                  <TableHead className="px-8 py-6 uppercase text-[10px] font-black tracking-widest text-black">Campo Beral</TableHead>
+                  <TableHead className="px-8 py-6 uppercase text-[10px] font-black tracking-widest text-black">Campo Invenza</TableHead>
                   <TableHead className="w-12"></TableHead>
                   <TableHead className="px-8 py-6 uppercase text-[10px] font-black tracking-widest text-black">Columna de tu Archivo</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {BERAL_FIELDS.map((field) => (
+                {INVENZA_FIELDS.map((field) => (
                   <TableRow key={field.key} className="hover:bg-zinc-50/50 transition-colors">
                     <TableCell className="px-8 py-6">
                       <div className="flex flex-col">

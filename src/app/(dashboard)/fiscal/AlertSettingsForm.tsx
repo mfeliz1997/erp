@@ -70,7 +70,7 @@ export function AlertSettingsForm({ currentThreshold, notifyWhatsapp, notifyEmai
       name="whatsapp_provider" 
       className="w-full p-2 border rounded-md text-sm"
     >
-      <option value="beral">Usar WhatsApp de Beral (Por defecto)</option>
+      <option value="invenza">Usar WhatsApp de Invenza (Por defecto)</option>
       <option value="custom">Usar mi propia API Key (Meta Cloud)</option>
     </select>
   </div>

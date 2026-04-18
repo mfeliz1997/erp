@@ -14,7 +14,7 @@ export default function LoginPage() {
     <div className="flex h-screen items-center justify-center bg-gray-50">
       <form action={formAction} className="p-8 bg-white rounded-xl shadow-md space-y-5 w-96">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Beral ERP</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Invenza ERP</h1>
           <p className="text-sm text-gray-500 mt-1">Inicia sesión en tu cuenta</p>
         </div>
         

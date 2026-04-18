@@ -79,7 +79,7 @@ export default async function PublicInvoicePage({
 
         {/* Footer */}
         <div className="p-4 text-center text-xs text-slate-400">
-          <p>Comprobante generado por Beral ERP</p>
+          <p>Comprobante generado por Invenza ERP</p>
         </div>
       </div>
     </main>

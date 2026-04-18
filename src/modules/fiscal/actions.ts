@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
-// Estándar de Beral para respuestas de acciones
+// Estándar de Invenza para respuestas de acciones
 export type FiscalActionState = {
   success: boolean;
   error?: string;

@@ -29,7 +29,7 @@ export function WhatsappShareButton({ invoiceId, phone, customerName, total }: P
     await logManualWhatsappShare(invoiceId);
     
     // 2. Formatear mensaje y URL
-    const message = `Hola ${customerName || 'Cliente'}, gracias por tu compra en Beral.\n\nTotal: RD$ ${total.toLocaleString()}\nTu factura digital: https://beral.do/view/${invoiceId}`;
+    const message = `Hola ${customerName || 'Cliente'}, gracias por tu compra en Invenza.\n\nTotal: RD$ ${total.toLocaleString()}\nTu factura digital: https://invenza.do/view/${invoiceId}`;
     const cleanPhone = phone.replace(/\D/g, ''); // Quita guiones o espacios
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     

@@ -254,12 +254,12 @@ async function sendAutomaticWhatsapp(
     // Si el negocio no activó el toggle automático, cancelamos silenciosamente
     if (!tenant?.whatsapp_auto_send) return;
 
-    // 2. Definir Credenciales (Fallback a las genéricas de Beral si el cliente no tiene propias)
-    const BERAL_DEFAULT_TOKEN = process.env.BERAL_META_TOKEN;
-    const BERAL_DEFAULT_PHONE_ID = process.env.BERAL_META_PHONE_ID;
+    // 2. Definir Credenciales (Fallback a las genéricas de Invenza si el cliente no tiene propias)
+    const INVENZA_DEFAULT_TOKEN = process.env.INVENZA_META_TOKEN;
+    const INVENZA_DEFAULT_PHONE_ID = process.env.INVENZA_META_PHONE_ID;
 
-    const token = tenant.whatsapp_meta_token || BERAL_DEFAULT_TOKEN;
-    const phoneId = tenant.whatsapp_phone_id || BERAL_DEFAULT_PHONE_ID;
+    const token = tenant.whatsapp_meta_token || INVENZA_DEFAULT_TOKEN;
+    const phoneId = tenant.whatsapp_phone_id || INVENZA_DEFAULT_PHONE_ID;
 
     if (!token || !phoneId) {
       console.warn(
@@ -282,14 +282,14 @@ async function sendAutomaticWhatsapp(
         to: customerPhone.replace(/\D/g, ""), // Asegurar formato limpio sin guiones
         type: "template",
         template: {
-          name: "beral_invoice_delivery", // IMPORTANTE: Este nombre debe coincidir con tu plantilla aprobada en Meta
+          name: "invenza_invoice_delivery", // IMPORTANTE: Este nombre debe coincidir con tu plantilla aprobada en Meta
           language: { code: "es_LA" },
           components: [
             {
               type: "body",
               parameters: [
                 { type: "text", text: tenant.name }, // Variable {{1}}: Nombre del negocio
-                { type: "text", text: `https://beral.do/view/${invoiceId}` }, // Variable {{2}}: Link
+                { type: "text", text: `https://invenza.do/view/${invoiceId}` }, // Variable {{2}}: Link
               ],
             },
           ],

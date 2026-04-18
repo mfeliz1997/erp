@@ -118,7 +118,7 @@ export function InvoiceDetailSheet({ invoice, isOpen, onClose }: InvoiceDetailSh
           </Accordion>
 
           <p className="text-[10px] text-center text-gray-400 uppercase font-bold tracking-[0.2em] pt-10">
-            Beral ERP - Modo Lite (Internal Use Only)
+            Invenza ERP - Modo Lite (Internal Use Only)
           </p>
         </div>
       </SheetContent>

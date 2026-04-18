@@ -15,7 +15,7 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
   return (
     <div id="thermal-ticket" className="print:block hidden w-[80mm] p-4 font-mono text-[12px] leading-tight text-black bg-white">
       <div className="text-center space-y-1 mb-4 border-b pb-2 border-black border-dashed">
-        <h1 className="font-bold text-lg uppercase">{tenant?.name || 'BERAL ERP'}</h1>
+        <h1 className="font-bold text-lg uppercase">{tenant?.name || 'INVENZA ERP'}</h1>
         <p className="text-[10px] uppercase">{tenant?.address || 'Dominican Republic'}</p>
         <p className="text-[10px]">RNC: {tenant?.rnc || '000-00000-0'}</p>
         <p className="text-[10px]">TEL: {tenant?.phone || '809-000-0000'}</p>
@@ -85,7 +85,7 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
 
       <div className="text-center mt-6 pt-6 border-t border-black border-dashed">
         <p className="text-[9px] uppercase font-bold">¡GRACIAS POR PREFERIRNOS!</p>
-        <p className="text-[8px] mt-1 italic">Software powered by Beral ERP</p>
+        <p className="text-[8px] mt-1 italic">Software powered by Invenza ERP</p>
       </div>
     </div>
   );
