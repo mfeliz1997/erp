@@ -39,29 +39,29 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-black" />
         <input 
           placeholder="BUSCAR VENTA POR CLIENTE O ID..." 
-          className="w-full h-14 pl-12 border-4 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all font-black uppercase tracking-widest text-xs placeholder:text-gray-200"
+          className="w-full h-14 pl-12 border border-gray-200 rounded-xl shadow-sm rounded-xl focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all font-semibold   text-xs placeholder:text-gray-200"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Vista de Escritorio (Tabla) */}
-      <div className="hidden lg:block bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+      <div className="hidden lg:block bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
         <Table>
-          <TableHeader className="bg-gray-50 border-b-2 border-black">
+          <TableHeader className="bg-gray-50 border-b border-gray-200">
             <TableRow>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black">Fecha</TableHead>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black">Cajero</TableHead>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black">Cliente</TableHead>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black">Total</TableHead>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black">Estado</TableHead>
-              <TableHead className="font-black uppercase text-[10px] tracking-widest text-black text-right">Acciones</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black">Fecha</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black">Cajero</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black">Cliente</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black">Total</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black">Estado</TableHead>
+              <TableHead className="font-semibold  text-xs  text-black text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredInvoices.length === 0 ? (
                <TableRow>
-                 <TableCell colSpan={6} className="h-48 text-center text-xs font-black uppercase text-gray-400 italic">
+                 <TableCell colSpan={6} className="h-48 text-center text-xs font-semibold  text-gray-400 ">
                    Sin registros de venta encontrados
                  </TableCell>
                </TableRow>
@@ -72,20 +72,20 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                   className="hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 last:border-0 group"
                   onClick={() => handleOpenDetail(inv)}
                 >
-                  <TableCell className="text-[10px] font-bold text-gray-500">
+                  <TableCell className="text-xs font-bold text-gray-500">
                     {format(new Date(inv.created_at), "dd/MM/yyyy HH:mm")}
                   </TableCell>
-                  <TableCell className="font-black uppercase text-[10px] tracking-tight">
+                  <TableCell className="font-semibold  text-xs tracking-tight">
                     {inv.profiles?.full_name?.split(' ')[0] || '---'}
                   </TableCell>
-                  <TableCell className="font-black uppercase text-[10px] tracking-tight">
+                  <TableCell className="font-semibold  text-xs tracking-tight">
                     {inv.customer_name || 'Consumidor Final'}
                   </TableCell>
-                  <TableCell className="font-black italic text-sm">
+                  <TableCell className="font-semibold  text-sm">
                     RD$ {inv.total.toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    <Badge className={`${inv.status === 'paid' ? 'bg-black' : 'bg-red-600'} rounded-none uppercase text-[9px] font-black tracking-widest px-2 py-0.5`}>
+                    <Badge className={`${inv.status === 'paid' ? 'bg-black' : 'bg-red-600'} rounded-xl  text-xs font-semibold  px-2 py-0.5`}>
                       {inv.status === 'paid' ? 'Pagado' : 'Pendiente'}
                     </Badge>
                   </TableCell>
@@ -129,7 +129,7 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
       {/* Vista de Móvil (Tarjetas) */}
       <div className="lg:hidden space-y-4 pb-20">
         {filteredInvoices.length === 0 ? (
-          <div className="p-20 text-center border-4 border-dashed border-gray-100 font-black uppercase text-gray-300 tracking-[0.3em]">
+          <div className="p-20 text-center border-4 border-solid border-gray-100 font-semibold  text-gray-300 ">
              Sin Registros
           </div>
         ) : (
@@ -137,36 +137,36 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
             <div 
               key={inv.id} 
               onClick={() => handleOpenDetail(inv)}
-              className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-6"
+              className="border border-gray-200 bg-white p-6 shadow-sm rounded-xl active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all space-y-6"
             >
-              <div className="flex justify-between items-start border-b-2 border-black border-dashed pb-4">
+              <div className="flex justify-between items-start border-b border-gray-200 border-solid pb-4">
                 <div className="space-y-1">
                    <div className="flex items-center gap-2">
                       <Receipt className="w-4 h-4" />
-                      <p className="font-black text-[10px] uppercase tracking-widest">{inv.id.slice(0,8)}</p>
+                      <p className="font-semibold text-xs  ">{inv.id.slice(0,8)}</p>
                    </div>
-                   <p className="text-[12px] font-black italic">{format(new Date(inv.created_at), "PPpp")}</p>
+                   <p className="text-[12px] font-semibold ">{format(new Date(inv.created_at), "PPpp")}</p>
                 </div>
-                <Badge className={`${inv.status === 'paid' ? 'bg-black' : 'bg-red-600'} rounded-none uppercase text-[8px] font-black tracking-[0.2em]`}>
+                <Badge className={`${inv.status === 'paid' ? 'bg-black' : 'bg-red-600'} rounded-xl  text-xs font-semibold `}>
                   {inv.status === 'paid' ? 'PAGADO' : 'PENDIENTE'}
                 </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase text-gray-400">Cliente</p>
-                    <p className="text-xs font-black uppercase truncate">{inv.customer_name || 'CONSUMIDOR FINAL'}</p>
+                    <p className="text-xs font-semibold  text-gray-400">Cliente</p>
+                    <p className="text-xs font-semibold  truncate">{inv.customer_name || 'CONSUMIDOR FINAL'}</p>
                  </div>
                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase text-gray-400 text-right">Cajero</p>
-                    <p className="text-xs font-black uppercase text-right leading-none">{inv.profiles?.full_name?.split(' ')[0] || '---'}</p>
+                    <p className="text-xs font-semibold  text-gray-400 text-right">Cajero</p>
+                    <p className="text-xs font-semibold  text-right leading-none">{inv.profiles?.full_name?.split(' ')[0] || '---'}</p>
                  </div>
               </div>
 
               <div className="flex items-center justify-between pt-4">
                  <div>
-                    <p className="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Total Venta</p>
-                    <p className="text-2xl font-black italic">RD$ {inv.total.toLocaleString()}</p>
+                    <p className="text-xs font-semibold  text-gray-400 mb-1 leading-none">Total Venta</p>
+                    <p className="text-2xl font-semibold ">RD$ {inv.total.toLocaleString()}</p>
                  </div>
                  
                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>

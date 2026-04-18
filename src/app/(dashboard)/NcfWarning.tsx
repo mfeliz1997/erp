@@ -34,7 +34,7 @@ export default async function NcfWarning() {
               : `Atención: Varias secuencias NCF están por agotarse (menos de ${threshold} disponibles).`}
           </span>
         </div>
-        <a href="/fiscal" className="text-xs bg-amber-200 hover:bg-amber-300 text-amber-900 px-3 py-1 rounded-md transition-colors font-bold uppercase">
+        <a href="/fiscal" className="text-xs bg-amber-200 hover:bg-amber-300 text-amber-900 px-3 py-1 rounded-md transition-colors font-bold ">
           Resolver ahora
         </a>
       </div>

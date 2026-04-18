@@ -33,7 +33,7 @@ export function ProductGrid({ products, tenant }: { products: any[], tenant: any
             )}
 
             {product.stock <= 3 && (
-              <span className="absolute top-2 right-2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 uppercase tracking-tighter">
+              <span className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5  ">
                 ¡Solo {product.stock}!
               </span>
             )}
@@ -45,7 +45,7 @@ export function ProductGrid({ products, tenant }: { products: any[], tenant: any
                   e.stopPropagation();
                   handleAddToCart(product);
                 }}
-                className="hidden md:flex bg-white text-black px-4 py-2 font-bold text-xs transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl hover:bg-black hover:text-white"
+                className="hidden md:flex bg-white text-black px-4 py-2 font-bold text-xs transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl hover:bg-primary hover:text-primary-foreground"
                 style={{ borderRadius: '0px' }}
               >
                 AGREGAR +
@@ -54,7 +54,7 @@ export function ProductGrid({ products, tenant }: { products: any[], tenant: any
           </div>
 
           <div className="mt-4 flex flex-col flex-1">
-            <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight mb-1 uppercase tracking-tight truncate">
+            <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight mb-1  tracking-tight truncate">
               {product.name}
             </h3>
 
@@ -65,7 +65,7 @@ export function ProductGrid({ products, tenant }: { products: any[], tenant: any
             <div className="mt-auto md:hidden">
               <button 
                 onClick={() => handleAddToCart(product)}
-                className="w-full py-2 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                className="w-full py-2 text-white text-xs font-bold  tracking-wider flex items-center justify-center gap-2"
                 style={{ borderRadius: '0px', backgroundColor: brandColor }}
               >
                 <Plus className="w-4 h-4" />

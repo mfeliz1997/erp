@@ -31,12 +31,12 @@ export default async function InvoicesPage() {
       {/* Header Estético */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-black text-white rounded-none shadow-[4px_4px_0px_0px_rgba(31,41,55,0.4)]">
+          <div className="p-3 bg-primary text-primary-foreground rounded-xl shadow-sm rounded-xl">
             <ReceiptText className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter">Historial de Ventas</h1>
-            <p className="text-xs font-bold uppercase text-gray-400">Control total de transacciones por cajero</p>
+            <h1 className="text-3xl font-semibold  ">Historial de Ventas</h1>
+            <p className="text-xs font-bold  text-gray-400">Control total de transacciones por cajero</p>
           </div>
         </div>
       </div>

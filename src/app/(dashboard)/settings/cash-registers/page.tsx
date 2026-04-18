@@ -16,7 +16,7 @@ export default async function CashRegistersSettingsPage() {
     .single();
 
   if (profile?.role !== "admin") {
-    return <div className="p-10 text-red-500 font-bold uppercase tracking-widest text-sm">Acceso Denegado. Solo administradores.</div>;
+    return <div className="p-10 text-red-500 font-bold   text-sm">Acceso Denegado. Solo administradores.</div>;
   }
 
   // Obtener las cajas del tenant
@@ -29,7 +29,7 @@ export default async function CashRegistersSettingsPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-black uppercase tracking-tighter">Configuración de Cajas</h1>
+        <h1 className="text-3xl font-semibold  ">Configuración de Cajas</h1>
         <p className="text-slate-500 text-sm">Controle los puntos de venta físicos autorizados para este negocio.</p>
       </div>
 

@@ -36,16 +36,16 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-12 pb-20">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b-4 border-black pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-gray-200 pb-10">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-             <div className="p-2 bg-black text-white">
+             <div className="p-2 bg-primary text-primary-foreground">
                 <Users className="w-5 h-5" />
              </div>
-             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Directorio CRM</span>
+             <span className="text-xs font-semibold   text-gray-400">Directorio CRM</span>
           </div>
-          <h1 className="text-6xl font-black uppercase tracking-tighter italic leading-none">Clientes</h1>
-          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest pl-1">Gestión de cuentas y límites de crédito</p>
+          <h1 className="text-6xl font-semibold    leading-none">Clientes</h1>
+          <p className="text-gray-400 font-bold text-xs   pl-1">Gestión de cuentas y límites de crédito</p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
@@ -55,7 +55,7 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
                 name="q"
                 defaultValue={query}
                 placeholder="BUSCAR POR NOMBRE O RNC..." 
-                className="pl-10 h-12 w-full md:w-80 rounded-none border-2 border-black focus:outline-none focus:ring-0 text-xs font-black uppercase tracking-widest placeholder:text-gray-300"
+                className="pl-10 h-12 w-full md:w-80 rounded-xl border border-gray-200 focus:outline-none focus:ring-0 text-xs font-semibold   placeholder:text-gray-300"
             />
           </form>
           
@@ -63,7 +63,7 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
         </div>
       </div>
 
-      <div className="border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+      <div className="border border-gray-200 bg-white shadow-sm rounded-xl overflow-hidden">
         <CustomerTable customers={customers || []} />
       </div>
     </div>

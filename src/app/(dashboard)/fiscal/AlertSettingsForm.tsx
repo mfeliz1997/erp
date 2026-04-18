@@ -28,7 +28,7 @@ export function AlertSettingsForm({ currentThreshold, notifyWhatsapp, notifyEmai
           required 
           className="w-full p-2 border rounded-md text-sm outline-none focus:ring-1 focus:ring-black" 
         />
-        <p className="text-[10px] text-gray-400">Ej. 100, 500, 1000 comprobantes.</p>
+        <p className="text-xs text-gray-400">Ej. 100, 500, 1000 comprobantes.</p>
       </div>
 
       <div className="space-y-2 pt-2">
@@ -65,7 +65,7 @@ export function AlertSettingsForm({ currentThreshold, notifyWhatsapp, notifyEmai
   </div>
 
   <div className="space-y-2">
-    <label className="text-xs font-bold text-gray-500 uppercase">Proveedor de Servicio</label>
+    <label className="text-xs font-bold text-gray-500 ">Proveedor de Servicio</label>
     <select 
       name="whatsapp_provider" 
       className="w-full p-2 border rounded-md text-sm"

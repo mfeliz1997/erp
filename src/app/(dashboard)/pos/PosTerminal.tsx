@@ -139,7 +139,7 @@ const filteredProducts = useMemo(() => {
               type="text"
               autoFocus
               placeholder="Buscar producto..."
-              className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-black rounded-none focus:ring-0 outline-none text-base transition-all font-bold placeholder:font-medium"
+              className="w-full pl-12 pr-4 py-3 md:py-4 border border-gray-200 rounded-xl focus:ring-0 outline-none text-base transition-all font-bold placeholder:font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -154,20 +154,20 @@ const filteredProducts = useMemo(() => {
                 key={product.id}
                 onClick={() => addToCart(product)}
                 disabled={isOutOfStock}
-                className={`text-left p-3 md:p-4 border-2 rounded-none flex flex-col justify-between h-28 md:h-32 transition-all ${
+                className={`text-left p-3 md:p-4 border-2 rounded-xl flex flex-col justify-between h-28 md:h-32 transition-all ${
                   isOutOfStock 
                     ? 'bg-gray-50 border-gray-200 opacity-60' 
-                    : 'bg-white border-black hover:bg-gray-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none'
+                    : 'bg-white border-black hover:bg-gray-50 shadow-sm rounded-xl hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none'
                 }`}
               >
-                <span className={`font-black uppercase tracking-tighter line-clamp-2 text-[10px] md:text-sm ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}>
+                <span className={`font-semibold   line-clamp-2 text-xs md:text-sm ${isOutOfStock ? 'text-gray-400' : 'text-gray-900'}`}>
                   {product.name}
                 </span>
                 <div className="flex justify-between items-end w-full mt-2">
-                  <span className={`text-[8px] md:text-[10px] font-black uppercase px-2 py-0.5 border ${isOutOfStock ? 'border-red-200 text-red-600' : 'border-black bg-gray-100 text-gray-500'}`}>
+                  <span className={`text-xs md:text-xs font-semibold  px-2 py-0.5 border ${isOutOfStock ? 'border-red-200 text-red-600' : 'border-black bg-gray-100 text-gray-500'}`}>
                     {isOutOfStock ? 'Agotado' : `Stock: ${product.stock}`}
                   </span>
-                  <span className="font-black text-xs md:text-base italic">${product.price.toLocaleString()}</span>
+                  <span className="font-semibold text-xs md:text-base ">${product.price.toLocaleString()}</span>
                 </div>
               </button>
             );
@@ -178,18 +178,18 @@ const filteredProducts = useMemo(() => {
       {/* --- LADO DERECHO: Resumen y CRM --- */}
       <div className="w-full lg:w-[40%] flex flex-col bg-white lg:bg-gray-50 p-4 md:p-6 border-t-2 lg:border-t-0 border-black min-h-[400px] lg:min-h-0 lg:max-h-full">
         
-        <div className="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
-          <h2 className="text-xl font-black uppercase italic tracking-tighter">Resumen de Venta</h2>
+        <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-2">
+          <h2 className="text-xl font-semibold   ">Resumen de Venta</h2>
           {cart.length > 0 && (
-            <button onClick={clearCart} className="text-[10px] font-black uppercase text-red-600 underline decoration-red-200 underline-offset-4">Vaciar Carrito</button>
+            <button onClick={clearCart} className="text-xs font-semibold  text-red-600 underline decoration-red-200 underline-offset-4">Vaciar Carrito</button>
           )}
         </div>
 
         {/* 1. SELECCIÓN MÉTODO DE PAGO */}
         <div className="grid grid-cols-1 gap-2 mb-4">
-          <div className="flex border-2 border-black p-1 bg-white">
+          <div className="flex border border-gray-200 p-1 bg-white">
             {[{v: 'cash', l: 'PAGO AL CONTADO'}, {v: 'credit', l: 'VENTA A CRÉDITO'}].map(t => (
-              <button key={t.v} onClick={() => setPaymentMethod(t.v as any)} className={`flex-1 py-1.5 text-[10px] font-black tracking-widest uppercase transition-all ${paymentMethod === t.v ? 'bg-black text-white' : 'text-gray-400 hover:text-black'}`}>
+              <button key={t.v} onClick={() => setPaymentMethod(t.v as any)} className={`flex-1 py-1.5 text-xs font-semibold   transition-all ${paymentMethod === t.v ? 'bg-primary text-primary-foreground' : 'text-gray-400 hover:text-black'}`}>
                 {t.l}
               </button>
             ))}
@@ -197,7 +197,7 @@ const filteredProducts = useMemo(() => {
         </div>
 
         {/* 2. CRM MINIMALISTA */}
-        <div className="bg-white p-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-6 space-y-4">
+        <div className="bg-white p-4 border border-gray-200 shadow-sm rounded-xl mb-6 space-y-4">
           <div className="relative">
             <input 
               type="tel" 
@@ -205,24 +205,24 @@ const filteredProducts = useMemo(() => {
               maxLength={10}
               value={customerPhone}
               onChange={handlePhoneChange}
-              className={`w-full p-2.5 text-xs font-bold border-2 rounded-none outline-none transition-all ${paymentMethod === 'credit' ? 'border-red-300 placeholder:text-red-200' : 'border-gray-200 focus:border-black'}`}
+              className={`w-full p-2.5 text-xs font-bold border-2 rounded-xl outline-none transition-all ${paymentMethod === 'credit' ? 'border-red-300 placeholder:text-red-200' : 'border-gray-200 focus:border-black'}`}
             />
-            {isSearchingPhone && <span className="absolute right-3 top-3 text-[10px] font-black text-blue-500 animate-pulse">BUSCANDO...</span>}
+            {isSearchingPhone && <span className="absolute right-3 top-3 text-xs font-semibold text-blue-500 animate-pulse">BUSCANDO...</span>}
           </div>
 
           {/* Sugerencia Flotante */}
           {suggestedCustomer && (
-            <div className="flex items-center justify-between bg-black text-white p-3 rounded-none animate-in slide-in-from-top-2">
+            <div className="flex items-center justify-between bg-primary text-primary-foreground p-3 rounded-xl animate-in slide-in-from-top-2">
               <div className="flex items-center gap-3">
                 <div className="bg-white p-2 text-black">
                    <UserIcon />
                 </div>
-                <div className="text-[10px]">
-                  <p className="font-black uppercase tracking-widest">{suggestedCustomer.name}</p>
-                  <p className="text-gray-400 font-bold uppercase">{suggestedCustomer.city || 'SIN CIUDAD'}</p>
+                <div className="text-xs">
+                  <p className="font-semibold  ">{suggestedCustomer.name}</p>
+                  <p className="text-gray-400 font-bold ">{suggestedCustomer.city || 'SIN CIUDAD'}</p>
                 </div>
               </div>
-              <button onClick={handleAcceptSuggestion} className="text-[10px] bg-white text-black px-4 py-2 font-black uppercase hover:bg-gray-200 transition-colors">
+              <button onClick={handleAcceptSuggestion} className="text-xs bg-white text-black px-4 py-2 font-semibold  hover:bg-gray-200 transition-colors">
                 CARGAR
               </button>
             </div>
@@ -235,13 +235,13 @@ const filteredProducts = useMemo(() => {
                 placeholder="NOMBRE O RAZÓN SOCIAL *" 
                 value={customerName}
                 onChange={e => setCustomerName(e.target.value)}
-                className={`w-full p-2.5 text-xs font-bold border-2 rounded-none outline-none focus:border-black placeholder:font-black ${paymentMethod === 'credit' ? 'border-red-300' : 'border-gray-200'}`}
+                className={`w-full p-2.5 text-xs font-bold border-2 rounded-xl outline-none focus:border-black placeholder:font-semibold ${paymentMethod === 'credit' ? 'border-red-300' : 'border-gray-200'}`}
               />
               <input 
                 placeholder="CIUDAD / UBICACIÓN" 
                 value={customerCity}
                 onChange={e => setCustomerCity(e.target.value)}
-                className="w-full p-2.5 text-xs font-bold border-2 border-gray-200 rounded-none outline-none focus:border-black"
+                className="w-full p-2.5 text-xs font-bold border-2 border-gray-200 rounded-xl outline-none focus:border-black"
               />
             </div>
           )}
@@ -252,20 +252,20 @@ const filteredProducts = useMemo(() => {
           {cart.length === 0 ? (
              <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
                 <ShoppingCart size={32} className="opacity-20" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Carrito de venta vacío</span>
+                <span className="text-xs font-semibold  ">Carrito de venta vacío</span>
              </div>
           ) : (
             cart.map(item => (
-              <div key={item.id} className="flex justify-between items-center bg-white p-3 border-2 border-black">
+              <div key={item.id} className="flex justify-between items-center bg-white p-3 border border-gray-200">
                 <div className="flex-1 pr-4">
-                  <p className="font-black text-[11px] uppercase tracking-tighter truncate leading-tight">{item.name}</p>
-                  <p className="text-[10px] font-bold text-gray-500 mt-0.5">RD$ {item.price.toLocaleString()}</p>
+                  <p className="font-semibold text-[11px]   truncate leading-tight">{item.name}</p>
+                  <p className="text-xs font-bold text-gray-500 mt-0.5">RD$ {item.price.toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center border-2 border-black bg-gray-50">
-                    <button onClick={() => updateQuantity(item.id, item.cartQuantity - 1)} className="w-8 h-8 flex items-center justify-center font-black hover:bg-black hover:text-white transition-colors">-</button>
-                    <span className="w-8 text-center text-xs font-black">{item.cartQuantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.cartQuantity + 1)} className="w-8 h-8 flex items-center justify-center font-black hover:bg-black hover:text-white transition-colors">+</button>
+                  <div className="flex items-center border border-gray-200 bg-gray-50">
+                    <button onClick={() => updateQuantity(item.id, item.cartQuantity - 1)} className="w-8 h-8 flex items-center justify-center font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">-</button>
+                    <span className="w-8 text-center text-xs font-semibold">{item.cartQuantity}</span>
+                    <button onClick={() => updateQuantity(item.id, item.cartQuantity + 1)} className="w-8 h-8 flex items-center justify-center font-semibold hover:bg-primary hover:text-primary-foreground transition-colors">+</button>
                   </div>
                   <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-red-500 transition-colors"><XIcon /></button>
                 </div>
@@ -275,10 +275,10 @@ const filteredProducts = useMemo(() => {
         </div>
 
         {/* 4. FOOTER COBRO */}
-        <div className="pt-6 border-t-4 border-black mt-6 bg-white lg:bg-transparent">
+        <div className="pt-6 border-t border-gray-200 mt-6 bg-white lg:bg-transparent">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-black uppercase tracking-widest text-gray-400">Total a Pagar</span>
-            <span className="text-4xl font-black italic tracking-tighter">
+            <span className="text-xs font-semibold   text-gray-400">Total a Pagar</span>
+            <span className="text-4xl font-semibold  ">
               RD$ {cartTotal.toLocaleString()}
             </span>
           </div>
@@ -286,10 +286,10 @@ const filteredProducts = useMemo(() => {
           <button 
             onClick={handleCheckout}
             disabled={cart.length === 0 || isProcessing}
-            className={`w-full py-5 text-sm font-black uppercase tracking-[0.2em] transition-all relative overflow-hidden ${
+            className={`w-full py-5 text-sm font-semibold   transition-all relative overflow-hidden ${
               isProcessing || cart.length === 0 
                 ? 'bg-gray-100 text-gray-400 border-2 border-gray-200' 
-                : 'bg-black text-white shadow-[6px_6px_0px_0px_rgba(31,41,55,0.4)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
+                : 'bg-primary text-primary-foreground shadow-sm rounded-xl hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none'
             }`}
           >
             {isProcessing ? 'PROCESANDO TRANSACCION...' : (paymentMethod === 'credit' ? 'REGISTRAR CRÉDITO' : 'COBRAR E IMPRIMIR')}

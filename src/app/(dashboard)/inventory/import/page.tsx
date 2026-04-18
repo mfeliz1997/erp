@@ -8,19 +8,19 @@ export default function InventoryImportPage() {
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-zinc-400">
             <Layers className="w-5 h-5" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] leading-none">Catalog Management</span>
+            <span className="text-xs font-bold   leading-none">Catalog Management</span>
           </div>
-          <h1 className="text-6xl font-black uppercase tracking-tighter leading-none">Importar</h1>
+          <h1 className="text-6xl font-semibold   leading-none">Importar</h1>
           <p className="text-zinc-500 font-medium text-sm max-w-lg">
             Migra tu inventario desde archivos externos en segundos. Nuestro mapeador inteligente ajusta tus datos automáticamente.
           </p>
         </div>
         
-        <div className="flex bg-zinc-100 p-4 rounded-none border-l-4 border-black gap-4 items-center">
+        <div className="flex bg-zinc-100 p-4 rounded-xl border-l border-gray-200 gap-4 items-center">
            <FileSpreadsheet className="w-8 h-8 text-black" />
            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-black">Formato Sugerido</p>
-              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-tighter">CSV delimitado por comas (,))</p>
+              <p className="text-xs font-semibold   text-black">Formato Sugerido</p>
+              <p className="text-xs font-bold text-zinc-500  ">CSV delimitado por comas (,))</p>
            </div>
         </div>
       </div>

@@ -85,7 +85,7 @@ export default async function FiscalPage() {
                       <div key={emp.id} className="py-3 flex justify-between items-center">
                         <div>
                           <p className="text-sm font-medium capitalize text-gray-900">{emp.role}</p>
-                          <p className="text-[10px] text-gray-400">ID: {emp.id.split('-')[0]}...</p>
+                          <p className="text-xs text-gray-400">ID: {emp.id.split('-')[0]}...</p>
                         </div>
                         <ToggleAlertAction employeeId={emp.id} isActive={emp.receive_fiscal_alerts} />
                       </div>

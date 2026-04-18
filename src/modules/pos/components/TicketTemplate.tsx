@@ -14,14 +14,14 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
 
   return (
     <div id="thermal-ticket" className="print:block hidden w-[80mm] p-4 font-mono text-[12px] leading-tight text-black bg-white">
-      <div className="text-center space-y-1 mb-4 border-b pb-2 border-black border-dashed">
-        <h1 className="font-bold text-lg uppercase">{tenant?.name || 'INVENZA ERP'}</h1>
-        <p className="text-[10px] uppercase">{tenant?.address || 'Dominican Republic'}</p>
-        <p className="text-[10px]">RNC: {tenant?.rnc || '000-00000-0'}</p>
-        <p className="text-[10px]">TEL: {tenant?.phone || '809-000-0000'}</p>
+      <div className="text-center space-y-1 mb-4 border-b pb-2 border-black border-solid">
+        <h1 className="font-bold text-lg ">{tenant?.name || 'INVENZA ERP'}</h1>
+        <p className="text-xs ">{tenant?.address || 'Dominican Republic'}</p>
+        <p className="text-xs">RNC: {tenant?.rnc || '000-00000-0'}</p>
+        <p className="text-xs">TEL: {tenant?.phone || '809-000-0000'}</p>
       </div>
 
-      <div className="space-y-1 mb-4 text-[10px]">
+      <div className="space-y-1 mb-4 text-xs">
         <div className="flex justify-between">
           <span className="font-bold">FACTURA:</span>
           <span>{data.ncf || '00000001'}</span>
@@ -32,13 +32,13 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
         </div>
         <div className="flex justify-between">
           <span className="font-bold">CLIENTE:</span>
-          <span className="uppercase">{data.customer_name || 'Consumidor Final'}</span>
+          <span className="">{data.customer_name || 'Consumidor Final'}</span>
         </div>
       </div>
 
-      <table className="w-full text-left mb-4 border-b border-black border-dashed">
+      <table className="w-full text-left mb-4 border-b border-black border-solid">
         <thead>
-          <tr className="border-b border-black border-dashed">
+          <tr className="border-b border-black border-solid">
             <th className="py-1">Cant.</th>
             <th className="py-1">Desc.</th>
             <th className="py-1 text-right">Total</th>
@@ -52,7 +52,7 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
             return (
               <tr key={i}>
                 <td className="py-1 align-top">{quantity}</td>
-                <td className="py-1 uppercase group">
+                <td className="py-1  group">
                   {item.name}
                 </td>
                 <td className="py-1 text-right align-top">
@@ -83,9 +83,9 @@ export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
         </div>
       </div>
 
-      <div className="text-center mt-6 pt-6 border-t border-black border-dashed">
-        <p className="text-[9px] uppercase font-bold">¡GRACIAS POR PREFERIRNOS!</p>
-        <p className="text-[8px] mt-1 italic">Software powered by Invenza ERP</p>
+      <div className="text-center mt-6 pt-6 border-t border-black border-solid">
+        <p className="text-xs  font-bold">¡GRACIAS POR PREFERIRNOS!</p>
+        <p className="text-xs mt-1 ">Software powered by Invenza ERP</p>
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ export default function LoginPage() {
         <button 
           type="submit" 
           disabled={isPending}
-          className="w-full bg-black text-white p-2.5 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 font-medium"
+          className="w-full bg-primary text-primary-foreground p-2.5 rounded-lg hover:bg-gray-800 transition-colors disabled:bg-gray-400 font-medium"
         >
           {isPending ? 'Iniciando...' : 'Iniciar Sesión'}
         </button>

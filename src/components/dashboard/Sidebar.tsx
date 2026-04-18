@@ -59,16 +59,16 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
   const pathname = usePathname();
 
   const NavContent = ({ mobile = false }) => (
-    <div className="flex flex-col h-full bg-white border-r-2 border-black">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200">
       {/* Header */}
-      <div className="p-6 border-b-2 border-black flex items-center justify-between min-h-[100px]">
+      <div className="p-6 border-b border-gray-200 flex items-center justify-between min-h-[100px]">
         {!isCollapsed || mobile ? (
           <div className="overflow-hidden">
-            <h2 className="font-black text-xl uppercase tracking-tighter truncate">{tenantName || 'INVENZA'}</h2>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate mt-1">👤 {userName}</p>
+            <h2 className="font-semibold text-xl   truncate">{tenantName || 'INVENZA'}</h2>
+            <p className="text-xs font-bold text-gray-400   truncate mt-1">👤 {userName}</p>
           </div>
         ) : (
-          <div className="mx-auto bg-black text-white p-2 font-black text-xl">B</div>
+          <div className="mx-auto bg-primary text-primary-foreground p-2 font-semibold text-xl">B</div>
         )}
       </div>
 
@@ -84,9 +84,9 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
                 if (mobile) setMobileOpen(false);
               }}
               className={cn(
-                "flex items-center gap-4 px-3 py-3 text-xs font-black uppercase tracking-widest transition-all group border-2 border-transparent",
+                "flex items-center gap-4 px-3 py-3 text-xs font-semibold   transition-all group border-2 border-transparent",
                 isActive 
-                  ? "bg-black text-white border-black shadow-[4px_4px_0px_0px_rgba(31,41,55,0.4)]" 
+                  ? "bg-primary text-primary-foreground border-black shadow-sm rounded-xl" 
                   : "text-gray-500 hover:bg-gray-50 hover:border-black",
                 isCollapsed && !mobile && "justify-center px-0"
               )}
@@ -104,12 +104,12 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t-2 border-black">
+      <div className="p-4 border-t border-gray-200">
         <form action={logoutAction}>
           <button 
             type="submit" 
             className={cn(
-              "w-full flex items-center gap-4 px-3 py-3 text-xs font-black uppercase tracking-widest text-red-600 border-2 border-transparent hover:border-red-600 hover:bg-red-50 transition-all",
+              "w-full flex items-center gap-4 px-3 py-3 text-xs font-semibold   text-red-600 border-2 border-transparent hover:border-red-600 hover:bg-red-50 transition-all",
               isCollapsed && !mobile && "justify-center px-0"
             )}
             title="Cerrar Sesión"
@@ -124,7 +124,7 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
       {!mobile && (
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-24 bg-black text-white p-1 border-2 border-white rounded-full hover:scale-110 transition-transform z-50"
+          className="absolute -right-3 top-24 bg-primary text-primary-foreground p-1 border-2 border-white rounded-full hover:scale-110 transition-transform z-50"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
@@ -138,7 +138,7 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
       <div className="lg:hidden fixed top-4 left-4 z-[60]">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="border-2 border-black rounded-none bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Button variant="outline" size="icon" className="border border-gray-200 rounded-xl bg-white shadow-sm rounded-xl">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
@@ -155,7 +155,7 @@ export function Sidebar({ tenantName, userName, menuItems }: SidebarProps) {
       {/* Desktop Sidebar */}
       <aside 
         className={cn(
-          "hidden lg:flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out border-r-2 border-black bg-white z-[50]",
+          "hidden lg:flex flex-col h-screen sticky top-0 transition-all duration-300 ease-in-out border-r border-gray-200 bg-white z-[50]",
           isCollapsed ? "w-20" : "w-72"
         )}
       >

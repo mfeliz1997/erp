@@ -71,14 +71,14 @@ export function EditProductForm({ product }: { product: ProductProps }) {
       <div className="space-y-3">
         <label className="block text-sm font-semibold text-gray-900">Fotografía Principal</label>
         <div className="flex items-center gap-6">
-          <div className="w-20 h-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden transition-all hover:border-gray-300 relative group">
+          <div className="w-20 h-20 bg-gray-50 rounded-xl border-2 border-solid border-gray-200 flex items-center justify-center overflow-hidden transition-all hover:border-gray-300 relative group">
             {imagePreview ? (
               <img src={imagePreview} alt={product.name} className="w-full h-full object-cover" />
             ) : (
               <span className="text-gray-400 text-xs font-medium text-center">Sin<br/>Foto</span>
             )}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-white text-[10px] font-bold">Cambiar</span>
+              <span className="text-white text-xs font-bold">Cambiar</span>
             </div>
           </div>
           <input 
@@ -147,7 +147,7 @@ export function EditProductForm({ product }: { product: ProductProps }) {
         <button 
           type="submit" 
           disabled={isPending || isCompressing}
-          className="w-full bg-black text-white p-3.5 rounded-xl font-semibold hover:bg-gray-800 disabled:bg-gray-300 transition-all flex justify-center items-center gap-2 shadow-sm"
+          className="w-full bg-primary text-primary-foreground p-3.5 rounded-xl font-semibold hover:bg-gray-800 disabled:bg-gray-300 transition-all flex justify-center items-center gap-2 shadow-sm"
         >
           {(isPending || isCompressing) && (
             <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">

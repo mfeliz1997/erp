@@ -35,15 +35,15 @@ export function CustomerFormDialog({ onSuccess, trigger }: CustomerFormDialogPro
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-black text-white rounded-none hover:bg-zinc-800 font-bold uppercase tracking-widest text-[10px] px-6 h-10">
+          <Button className="bg-primary text-primary-foreground rounded-xl hover:bg-zinc-800 font-bold   text-xs px-6 h-10">
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Cliente
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="rounded-none border-2 border-black sm:max-w-[450px]">
+      <DialogContent className="rounded-xl border border-gray-200 sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle className="uppercase tracking-tighter font-black text-3xl">Expediente de Cliente</DialogTitle>
+          <DialogTitle className="  font-semibold text-3xl">Expediente de Cliente</DialogTitle>
           <DialogDescription className="font-medium text-xs">
             Complete los datos para habilitar facturación con comprobante o crédito.
           </DialogDescription>
@@ -51,18 +51,18 @@ export function CustomerFormDialog({ onSuccess, trigger }: CustomerFormDialogPro
         <form action={action} className="space-y-5 py-4">
           <div className="grid gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Nombre Completo / Razón Social</Label>
-              <Input id="name" name="name" required placeholder="Ej. Juan Perez Solis" className="rounded-none border-black border-2 h-11 font-black" />
+              <Label htmlFor="name" className=" text-xs font-bold  text-zinc-400">Nombre Completo / Razón Social</Label>
+              <Input id="name" name="name" required placeholder="Ej. Juan Perez Solis" className="rounded-xl border-black border-2 h-11 font-semibold" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="tax_type" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Tipo Documento</Label>
+                <Label htmlFor="tax_type" className=" text-xs font-bold  text-zinc-400">Tipo Documento</Label>
                 <Select name="tax_type" defaultValue="CEDULA">
-                  <SelectTrigger className="rounded-none border-black border-2 h-11 font-bold">
+                  <SelectTrigger className="rounded-xl border-black border-2 h-11 font-bold">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-none border-2 border-black">
+                  <SelectContent className="rounded-xl border border-gray-200">
                     <SelectItem value="CEDULA">CEDULA</SelectItem>
                     <SelectItem value="RNC">RNC</SelectItem>
                     <SelectItem value="PASAPORTE">PASAPORTE</SelectItem>
@@ -71,39 +71,39 @@ export function CustomerFormDialog({ onSuccess, trigger }: CustomerFormDialogPro
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tax_id" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Número Documento</Label>
-                <Input id="tax_id" name="tax_id" required placeholder="101000000" className="rounded-none border-black border-2 h-11 font-bold font-mono" />
+                <Label htmlFor="tax_id" className=" text-xs font-bold  text-zinc-400">Número Documento</Label>
+                <Input id="tax_id" name="tax_id" required placeholder="101000000" className="rounded-xl border-black border-2 h-11 font-bold font-mono" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="phone" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Teléfono</Label>
-                <Input id="phone" name="phone" placeholder="8091234567" className="rounded-none border-black border-2 h-11 font-bold" />
+                <Label htmlFor="phone" className=" text-xs font-bold  text-zinc-400">Teléfono</Label>
+                <Input id="phone" name="phone" placeholder="8091234567" className="rounded-xl border-black border-2 h-11 font-bold" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="credit_limit" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Límite Crédito</Label>
-                <Input id="credit_limit" name="credit_limit" type="number" defaultValue="0" className="rounded-none border-black border-2 h-11 font-black text-blue-600" />
+                <Label htmlFor="credit_limit" className=" text-xs font-bold  text-zinc-400">Límite Crédito</Label>
+                <Input id="credit_limit" name="credit_limit" type="number" defaultValue="0" className="rounded-xl border-black border-2 h-11 font-semibold text-blue-600" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Correo Electrónico</Label>
-              <Input id="email" name="email" type="email" placeholder="cliente@ejemplo.com" className="rounded-none border-black border-2 h-11 font-bold" />
+              <Label htmlFor="email" className=" text-xs font-bold  text-zinc-400">Correo Electrónico</Label>
+              <Input id="email" name="email" type="email" placeholder="cliente@ejemplo.com" className="rounded-xl border-black border-2 h-11 font-bold" />
             </div>
           </div>
 
           {state?.error && (
             <div className="bg-red-50 border-l-4 border-red-600 p-3">
-               <p className="text-[10px] text-red-600 font-black uppercase tracking-tight">
+               <p className="text-xs text-red-600 font-semibold  tracking-tight">
                  Error: {state.error}
                </p>
             </div>
           )}
 
           <DialogFooter className="pt-2">
-            <Button type="submit" disabled={isPending} className="w-full h-14 bg-black text-white font-black uppercase tracking-widest rounded-none hover:bg-zinc-800 transition-all shadow-lg active:scale-95">
+            <Button type="submit" disabled={isPending} className="w-full h-14 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800 transition-all shadow-lg active:scale-95">
               {isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : "Guardar Cliente"}
             </Button>
           </DialogFooter>

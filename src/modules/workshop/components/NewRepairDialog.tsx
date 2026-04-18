@@ -32,24 +32,24 @@ export function NewRepairDialog({ customers }: NewRepairDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white rounded-none font-bold uppercase tracking-widest text-xs h-12 px-6">
+        <Button className="bg-primary text-primary-foreground rounded-xl font-bold   text-xs h-12 px-6">
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Ingreso
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] rounded-none border-2 border-black">
+      <DialogContent className="sm:max-w-[500px] rounded-xl border border-gray-200">
         <DialogHeader>
-          <DialogTitle className="uppercase tracking-tighter font-black text-3xl">Orden de Taller</DialogTitle>
+          <DialogTitle className="  font-semibold text-3xl">Orden de Taller</DialogTitle>
           <DialogDescription className="text-xs font-medium">Registro de equipo para diagnóstico o reparación.</DialogDescription>
         </DialogHeader>
         <form action={action} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Cliente</Label>
+            <Label className=" text-xs font-bold  text-zinc-400">Cliente</Label>
             <Select name="customer_id" required>
-              <SelectTrigger className="rounded-none border-2 border-black h-12 font-bold">
+              <SelectTrigger className="rounded-xl border border-gray-200 h-12 font-bold">
                 <SelectValue placeholder="Seleccionar cliente..." />
               </SelectTrigger>
-              <SelectContent className="rounded-none border-2 border-black">
+              <SelectContent className="rounded-xl border border-gray-200">
                 {customers.map(c => (
                   <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                 ))}
@@ -59,27 +59,27 @@ export function NewRepairDialog({ customers }: NewRepairDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Marca</Label>
-              <Input name="brand" placeholder="Ej: Apple, Samsung" required className="rounded-none border-2 border-black h-12 font-bold" />
+              <Label className=" text-xs font-bold  text-zinc-400">Marca</Label>
+              <Input name="brand" placeholder="Ej: Apple, Samsung" required className="rounded-xl border border-gray-200 h-12 font-bold" />
             </div>
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Modelo</Label>
-              <Input name="model" placeholder="Ej: iPhone 15 Pro" required className="rounded-none border-2 border-black h-12 font-bold" />
+              <Label className=" text-xs font-bold  text-zinc-400">Modelo</Label>
+              <Input name="model" placeholder="Ej: iPhone 15 Pro" required className="rounded-xl border border-gray-200 h-12 font-bold" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Falla Reportada</Label>
-            <Textarea name="issue" placeholder="Describa el problema detalladamente" required className="rounded-none border-2 border-black min-h-[100px] font-medium" />
+            <Label className=" text-xs font-bold  text-zinc-400">Falla Reportada</Label>
+            <Textarea name="issue" placeholder="Describa el problema detalladamente" required className="rounded-xl border border-gray-200 min-h-[100px] font-medium" />
           </div>
 
           <div className="space-y-2">
-            <Label className="uppercase text-[10px] font-bold tracking-widest text-zinc-400">Costo Estimado (RD$)</Label>
-            <Input name="estimated_cost" type="number" defaultValue="0" className="rounded-none border-2 border-black h-12 font-black text-xl text-blue-600" />
+            <Label className=" text-xs font-bold  text-zinc-400">Costo Estimado (RD$)</Label>
+            <Input name="estimated_cost" type="number" defaultValue="0" className="rounded-xl border border-gray-200 h-12 font-semibold text-xl text-blue-600" />
           </div>
 
           <DialogFooter className="pt-4">
-            <Button type="submit" disabled={isPending} className="w-full h-14 bg-black text-white font-black uppercase tracking-widest rounded-none hover:bg-zinc-800">
+            <Button type="submit" disabled={isPending} className="w-full h-14 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800">
               {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Registrar Equipo"}
             </Button>
           </DialogFooter>

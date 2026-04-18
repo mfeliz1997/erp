@@ -29,9 +29,9 @@ export default async function PurchasesPage() {
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-zinc-400">
             <Truck className="w-5 h-5" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] leading-none">Inbound Logistics</span>
+            <span className="text-xs font-bold   leading-none">Inbound Logistics</span>
           </div>
-          <h1 className="text-6xl font-black uppercase tracking-tighter leading-none">Compras</h1>
+          <h1 className="text-6xl font-semibold   leading-none">Compras</h1>
           <p className="text-zinc-500 font-medium text-sm max-w-lg">
             Registre la mercancía recibida de suplidores para incrementar su stock y actualizar costos.
           </p>

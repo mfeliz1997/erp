@@ -20,9 +20,9 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
 
   return (
     <div className="max-w-md mx-auto mt-10">
-      <Card className="border-2 border-black rounded-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <CardHeader className="bg-black text-white rounded-none">
-          <CardTitle className="flex items-center gap-2 uppercase tracking-widest text-lg">
+      <Card className="border border-gray-200 rounded-xl shadow-sm rounded-xl">
+        <CardHeader className="bg-primary text-primary-foreground rounded-xl">
+          <CardTitle className="flex items-center gap-2   text-lg">
             <Wallet className="w-5 h-5" />
             Apertura de Caja
           </CardTitle>
@@ -33,14 +33,14 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
         <CardContent className="pt-6">
           <form action={action} id="open-shift-form" className="space-y-6">
             <div className="space-y-2">
-              <Label className="uppercase font-bold text-xs tracking-widest">Seleccionar Caja</Label>
+              <Label className=" font-bold text-xs ">Seleccionar Caja</Label>
               <Select name="register_id" required>
-                <SelectTrigger className="rounded-none border-black border-2 h-12">
+                <SelectTrigger className="rounded-xl border-black border-2 h-12">
                   <SelectValue placeholder="Busque una caja..." />
                 </SelectTrigger>
-                <SelectContent className="rounded-none border-2 border-black">
+                <SelectContent className="rounded-xl border border-gray-200">
                   {registers.map((reg) => (
-                    <SelectItem key={reg.id} value={reg.id} className="rounded-none">
+                    <SelectItem key={reg.id} value={reg.id} className="rounded-xl">
                       {reg.name}
                     </SelectItem>
                   ))}
@@ -49,7 +49,7 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label className="uppercase font-bold text-xs tracking-widest">Monto de Apertura (Base)</Label>
+              <Label className=" font-bold text-xs ">Monto de Apertura (Base)</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500">RD$</span>
                 <Input
@@ -58,14 +58,14 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
                   step="0.01"
                   required
                   defaultValue="0.00"
-                  className="pl-12 rounded-none border-black border-2 h-12 text-lg font-bold"
+                  className="pl-12 rounded-xl border-black border-2 h-12 text-lg font-bold"
                 />
               </div>
-              <p className="text-[10px] text-gray-500">Dinero disponible en caja al iniciar el turno.</p>
+              <p className="text-xs text-gray-500">Dinero disponible en caja al iniciar el turno.</p>
             </div>
 
             {state?.error && (
-              <Alert variant="destructive" className="rounded-none border-2">
+              <Alert variant="destructive" className="rounded-xl border-2">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{state.error}</AlertDescription>
@@ -78,7 +78,7 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
             form="open-shift-form"
             type="submit" 
             disabled={isPending}
-            className="w-full bg-black hover:bg-gray-800 text-white font-bold h-12 rounded-none uppercase tracking-[0.2em] transition-all active:scale-95"
+            className="w-full bg-black hover:bg-gray-800 text-white font-bold h-12 rounded-xl   transition-all active:scale-95"
           >
             {isPending ? 'Abriendo turno...' : 'Iniciar Turno'}
           </Button>

@@ -14,7 +14,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-black tracking-tight text-gray-900">Crear Negocio</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Crear Negocio</h1>
           <p className="text-gray-500 mt-2">Prueba Invenza gratis por 14 días.</p>
         </div>
 
@@ -122,7 +122,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full bg-black text-white p-3 rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed mt-4 shadow-md"
+            className="w-full bg-primary text-primary-foreground p-3 rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed mt-4 shadow-md"
           >
             {isPending ? 'Configurando tu ERP...' : 'Registrar Mi Negocio'}
           </button>

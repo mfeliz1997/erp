@@ -119,7 +119,7 @@ const handleSubmit = async (formData: FormData) => {
         <div className="space-y-3">
           <label className="block text-sm font-semibold text-gray-900">Fotografía Principal</label>
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden transition-all hover:border-gray-300">
+            <div className="w-24 h-24 bg-gray-50 rounded-xl border-2 border-solid border-gray-200 flex items-center justify-center overflow-hidden transition-all hover:border-gray-300">
               {imagePreview ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
@@ -258,7 +258,7 @@ const handleSubmit = async (formData: FormData) => {
           <button 
             type="submit" 
             disabled={isPending || isLoading || isCompressing}
-            className="w-full bg-black text-white p-3.5 rounded-xl hover:bg-gray-800 transition-all font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm flex justify-center items-center gap-2"
+            className="w-full bg-primary text-primary-foreground p-3.5 rounded-xl hover:bg-gray-800 transition-all font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm flex justify-center items-center gap-2"
           >
             {(isPending || isCompressing) ? (
               <>

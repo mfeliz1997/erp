@@ -49,7 +49,7 @@ export default async function SalesHistoryPage() {
                 <TableCell className="font-medium">{sale.customer_name}</TableCell>
                 <TableCell className="text-gray-500">{sale.profiles?.full_name || 'Sistema'}</TableCell>
                 <TableCell>
-                  <Badge className={`${sale.status === 'paid' ? 'bg-black text-white' : sale.status === 'pending' ? 'bg-yellow-400 text-black' : 'bg-red-600 text-white'} rounded-none uppercase text-[9px] font-black tracking-widest px-2 py-0.5 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+                  <Badge className={`${sale.status === 'paid' ? 'bg-primary text-primary-foreground' : sale.status === 'pending' ? 'bg-yellow-400 text-black' : 'bg-red-600 text-white'} rounded-xl  text-xs font-semibold  px-2 py-0.5 border border-gray-200 shadow-sm rounded-xl`}>
                     {sale.status === 'paid' ? 'Pagado' : sale.status === 'pending' ? 'Crédito' : 'Cancelado'}
                   </Badge>
                 </TableCell>

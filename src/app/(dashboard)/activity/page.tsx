@@ -51,7 +51,7 @@ export default async function ActivityLogPage() {
          <div className="p-4 bg-red-50 rounded-full">
             <AlertCircle className="w-12 h-12 text-red-600" />
          </div>
-        <h2 className="text-2xl font-black uppercase tracking-tighter text-red-900">Acceso Denegado</h2>
+        <h2 className="text-2xl font-semibold   text-red-900">Acceso Denegado</h2>
         <p className="max-w-xs text-red-700/60 font-medium text-sm">
           Solo los administradores tienen permiso para visualizar el historial de auditoría del sistema.
         </p>
@@ -73,15 +73,15 @@ export default async function ActivityLogPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-10">
       {/* Header Estético */}
-      <div className="border-b-4 border-black pb-6">
-        <h1 className="text-4xl font-black uppercase tracking-tighter italic">Auditoría del Sistema</h1>
-        <p className="text-xs font-bold uppercase text-gray-400 mt-2 tracking-widest">Línea de tiempo de actividades en tiempo real</p>
+      <div className="border-b border-gray-200 pb-6">
+        <h1 className="text-4xl font-semibold   ">Auditoría del Sistema</h1>
+        <p className="text-xs font-bold  text-gray-400 mt-2 ">Línea de tiempo de actividades en tiempo real</p>
       </div>
 
       {/* Timeline UI */}
       <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
         {logs?.length === 0 ? (
-          <div className="text-center p-20 border-2 border-dashed border-gray-200 uppercase font-black text-gray-300">
+          <div className="text-center p-20 border-2 border-solid border-gray-200  font-semibold text-gray-300">
              No se han registrado actividades aún
           </div>
         ) : (
@@ -93,12 +93,12 @@ export default async function ActivityLogPage() {
               </div>
 
               {/* Card / Content */}
-              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none">
+              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 bg-white border border-gray-200 shadow-sm rounded-xl rounded-xl">
                 <div className="flex items-center justify-between space-x-2 mb-1">
-                  <div className="font-black text-black uppercase text-[10px] tracking-widest">
+                  <div className="font-semibold text-black  text-xs ">
                     {log.profiles?.full_name || 'Sistema'}
                   </div>
-                  <time className="font-mono text-[9px] text-gray-400 uppercase">
+                  <time className="font-mono text-xs text-gray-400 ">
                     {format(new Date(log.created_at), "HH:mm · dd MMM", { locale: es })}
                   </time>
                 </div>
@@ -106,7 +106,7 @@ export default async function ActivityLogPage() {
                   {log.description}
                 </div>
                 <div className="mt-3 flex gap-2">
-                   <Badge variant="outline" className="rounded-none border-gray-200 text-[9px] uppercase font-black text-gray-400">
+                   <Badge variant="outline" className="rounded-xl border-gray-200 text-xs  font-semibold text-gray-400">
                       {log.action}
                    </Badge>
                 </div>
@@ -117,7 +117,7 @@ export default async function ActivityLogPage() {
       </div>
 
       <div className="pt-10 text-center">
-         <p className="text-[10px] uppercase font-black text-gray-300 tracking-[0.5em]">Fin del Historial Reciente</p>
+         <p className="text-xs  font-semibold text-gray-300 ">Fin del Historial Reciente</p>
       </div>
     </div>
   );

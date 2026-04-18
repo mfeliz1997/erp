@@ -89,13 +89,13 @@ export function ImportMapper() {
 
   if (status === "success") {
     return (
-      <Card className="rounded-none border-2 border-black text-center p-20 shadow-2xl animate-in zoom-in duration-300">
+      <Card className="rounded-xl border border-gray-200 text-center p-20 shadow-2xl animate-in zoom-in duration-300">
         <div className="flex flex-col items-center gap-6">
            <div className="bg-black p-6 rounded-full">
               <CheckCircle2 className="w-16 h-16 text-white" />
            </div>
-           <h2 className="text-4xl font-black uppercase tracking-tighter">¡Importación Exitosa!</h2>
-           <Button onClick={() => router.push("/inventory")} className="bg-black text-white px-10 h-14 font-black uppercase tracking-widest rounded-none">
+           <h2 className="text-4xl font-semibold  ">¡Importación Exitosa!</h2>
+           <Button onClick={() => router.push("/inventory")} className="bg-primary text-primary-foreground px-10 h-14 font-semibold   rounded-xl">
              Ir al Inventario
            </Button>
         </div>
@@ -106,29 +106,29 @@ export function ImportMapper() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
       {status === "idle" ? (
-        <label className="group border-4 border-dashed border-zinc-200 p-24 flex flex-col items-center justify-center cursor-pointer hover:border-black hover:bg-zinc-50 transition-all rounded-none">
+        <label className="group border-4 border-solid border-zinc-200 p-24 flex flex-col items-center justify-center cursor-pointer hover:border-black hover:bg-zinc-50 transition-all rounded-xl">
           <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
           <Upload className="w-20 h-20 text-zinc-300 group-hover:text-black mb-6 transition-colors" />
-          <h3 className="text-3xl font-black uppercase tracking-tighter">Arrastrar Archivo</h3>
-          <p className="text-zinc-400 font-bold text-[10px] uppercase tracking-widest mt-2">Compatible con CSV (Soporte Excel próximamente)</p>
-          <div className="mt-8 bg-black text-white px-8 py-3 font-black uppercase text-[10px] tracking-[0.2em]">Seleccionar Inventario</div>
+          <h3 className="text-3xl font-semibold  ">Arrastrar Archivo</h3>
+          <p className="text-zinc-400 font-bold text-xs   mt-2">Compatible con CSV (Soporte Excel próximamente)</p>
+          <div className="mt-8 bg-primary text-primary-foreground px-8 py-3 font-semibold  text-xs ">Seleccionar Inventario</div>
         </label>
       ) : (
-        <Card className="rounded-none border-2 border-black overflow-hidden shadow-2xl">
-          <CardHeader className="bg-black text-white p-8 border-b-2 border-black">
+        <Card className="rounded-xl border border-gray-200 overflow-hidden shadow-2xl">
+          <CardHeader className="bg-primary text-primary-foreground p-8 border-b border-gray-200">
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle className="text-4xl font-black uppercase tracking-tighter flex items-center gap-3">
+                <CardTitle className="text-4xl font-semibold   flex items-center gap-3">
                   Configurar Mapeo
                   {status === "mapping_ai" && <Sparkles className="w-6 h-6 text-amber-400 animate-pulse" />}
                 </CardTitle>
-                <CardDescription className="text-zinc-400 font-bold text-[10px] uppercase tracking-widest mt-2 items-center flex gap-2">
+                <CardDescription className="text-zinc-400 font-bold text-xs   mt-2 items-center flex gap-2">
                    {status === "mapping_ai" ? "IA analizando columnas..." : "La IA ha pre-seleccionado las columnas por ti"}
                 </CardDescription>
               </div>
               <div className="text-right">
-                 <p className="text-4xl font-black leading-none">{fileData.length}</p>
-                 <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Filas cargadas</p>
+                 <p className="text-4xl font-semibold leading-none">{fileData.length}</p>
+                 <p className="text-xs font-bold   text-zinc-400">Filas cargadas</p>
               </div>
             </div>
           </CardHeader>
@@ -136,9 +136,9 @@ export function ImportMapper() {
             <Table>
               <TableHeader className="bg-zinc-50 border-b-2 border-zinc-100">
                 <TableRow>
-                  <TableHead className="px-8 py-6 uppercase text-[10px] font-black tracking-widest text-black">Campo Invenza</TableHead>
+                  <TableHead className="px-8 py-6  text-xs font-semibold  text-black">Campo Invenza</TableHead>
                   <TableHead className="w-12"></TableHead>
-                  <TableHead className="px-8 py-6 uppercase text-[10px] font-black tracking-widest text-black">Columna de tu Archivo</TableHead>
+                  <TableHead className="px-8 py-6  text-xs font-semibold  text-black">Columna de tu Archivo</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -146,8 +146,8 @@ export function ImportMapper() {
                   <TableRow key={field.key} className="hover:bg-zinc-50/50 transition-colors">
                     <TableCell className="px-8 py-6">
                       <div className="flex flex-col">
-                        <span className="text-xl font-black uppercase tracking-tighter text-zinc-800">{field.label}</span>
-                        {field.required && <span className="text-[9px] font-black text-red-500 uppercase tracking-widest mt-1">Obligatorio</span>}
+                        <span className="text-xl font-semibold   text-zinc-800">{field.label}</span>
+                        {field.required && <span className="text-xs font-semibold text-red-500   mt-1">Obligatorio</span>}
                       </div>
                     </TableCell>
                     <TableCell className="text-zinc-200">
@@ -159,13 +159,13 @@ export function ImportMapper() {
                         onValueChange={(v) => setMapping(prev => ({ ...prev, [field.key]: v }))}
                         disabled={status === "mapping_ai"}
                       >
-                        <SelectTrigger className="rounded-none border-2 border-black h-12 font-bold focus:ring-0">
+                        <SelectTrigger className="rounded-xl border border-gray-200 h-12 font-bold focus:ring-0">
                           <SelectValue placeholder="Omitir este campo" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-none border-2 border-black font-bold">
-                          <SelectItem value="none" className="italic text-zinc-400">Omitir</SelectItem>
+                        <SelectContent className="rounded-xl border border-gray-200 font-bold">
+                          <SelectItem value="none" className=" text-zinc-400">Omitir</SelectItem>
                           {headers.map(h => (
-                            <SelectItem key={h} value={h} className="uppercase tracking-tight">{h}</SelectItem>
+                            <SelectItem key={h} value={h} className=" tracking-tight">{h}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -175,24 +175,24 @@ export function ImportMapper() {
               </TableBody>
             </Table>
 
-            <div className="p-10 bg-zinc-50 border-t-2 border-black flex flex-col md:flex-row gap-6 justify-between items-center">
+            <div className="p-10 bg-zinc-50 border-t border-gray-200 flex flex-col md:flex-row gap-6 justify-between items-center">
                <div className="flex gap-4 items-center">
-                  <div className="bg-amber-100 p-2 rounded-none border border-amber-200">
+                  <div className="bg-amber-100 p-2 rounded-xl border border-amber-200">
                     <Sparkles className="w-5 h-5 text-amber-600" />
                   </div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 max-w-xs leading-relaxed">
+                  <p className="text-xs font-bold   text-zinc-500 max-w-xs leading-relaxed">
                     Hemos mapeado los campos automáticamente usando IA para ahorrarte tiempo. Por favor verifica antes de procesar.
                   </p>
                </div>
 
                <div className="flex gap-4 w-full md:w-auto">
-                 <Button variant="outline" onClick={() => setStatus("idle")} className="rounded-none border-2 border-zinc-200 font-black uppercase tracking-widest text-[10px] px-8 h-14">
+                 <Button variant="outline" onClick={() => setStatus("idle")} className="rounded-xl border-2 border-zinc-200 font-semibold   text-xs px-8 h-14">
                    Cambiar Archivo
                  </Button>
                  <Button 
                     onClick={handleImport}
                     disabled={status === "importing" || status === "mapping_ai"}
-                    className="bg-black text-white rounded-none font-black uppercase tracking-[0.2em] text-[10px] px-12 h-14 shadow-2xl hover:bg-zinc-800 transition-all flex-1 md:flex-none"
+                    className="bg-primary text-primary-foreground rounded-xl font-semibold   text-xs px-12 h-14 shadow-2xl hover:bg-zinc-800 transition-all flex-1 md:flex-none"
                  >
                    {status === "importing" ? (
                      <span className="flex items-center gap-3">

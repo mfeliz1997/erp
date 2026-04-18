@@ -27,12 +27,12 @@ export default async function Page({
     // Pero con limit 1 .single() debería funcionar si hay al menos uno.
     return (
       <div className="p-10 font-mono">
-        <h1 className="text-red-500 font-bold uppercase tracking-tighter">Tenant Error</h1>
+        <h1 className="text-red-500 font-bold  ">Tenant Error</h1>
         <div className="mt-4 p-4 bg-gray-50 border border-gray-200">
           <p><strong>Subdomain:</strong> {subdomain}</p>
           <p><strong>Error:</strong> {tenantError?.message || "No tenant found with this subdomain."}</p>
         </div>
-        <p className="mt-4 text-[10px] text-gray-500 uppercase tracking-widest">
+        <p className="mt-4 text-xs text-gray-500  ">
             Please ensure the subdomain '{subdomain}' is unique and assigned in the database.
         </p>
       </div>

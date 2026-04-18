@@ -68,7 +68,7 @@ export default function DebtManager({ initialDebts }: { initialDebts: any[] }) {
               
               <div className="flex items-center gap-4 w-full sm:w-auto">
                 <div className="text-right flex-1 sm:flex-none">
-                  <p className="text-xs font-semibold text-gray-400 uppercase">Balance Pendiente</p>
+                  <p className="text-xs font-semibold text-gray-400 ">Balance Pendiente</p>
                   <p className="font-bold text-red-600 text-xl">${Number(debt.balance).toLocaleString()}</p>
                 </div>
                 <button 
@@ -92,7 +92,7 @@ export default function DebtManager({ initialDebts }: { initialDebts: any[] }) {
 
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Monto a Pagar (Máx: ${selectedDebt.balance})</label>
+                <label className="block text-xs font-semibold text-gray-500  mb-1">Monto a Pagar (Máx: ${selectedDebt.balance})</label>
                 <input 
                   type="number" 
                   autoFocus
@@ -113,7 +113,7 @@ export default function DebtManager({ initialDebts }: { initialDebts: any[] }) {
               <button 
                 onClick={handlePayment}
                 disabled={isProcessing || !amount || amount <= 0 || amount > selectedDebt.balance}
-                className="flex-1 py-3 font-semibold bg-black text-white rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-colors shadow-md"
+                className="flex-1 py-3 font-semibold bg-primary text-primary-foreground rounded-xl hover:bg-gray-800 disabled:opacity-50 transition-colors shadow-md"
               >
                 {isProcessing ? "Procesando..." : "Confirmar Pago"}
               </button>

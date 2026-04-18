@@ -27,7 +27,7 @@ export function DeleteButton({ productId }: { productId: string }) {
         ) : (
           <>
             <Trash2 className="w-4 h-4" />
-            <span className="lg:hidden text-[10px] font-black uppercase tracking-widest">Eliminar</span>
+            <span className="lg:hidden text-xs font-semibold  ">Eliminar</span>
           </>
         )}
       </button>

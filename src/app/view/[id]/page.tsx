@@ -35,7 +35,7 @@ export default async function PublicInvoicePage({
         </div>
 
         {/* Info Fiscal */}
-        <div className="p-6 border-b border-dashed border-slate-300 bg-slate-50">
+        <div className="p-6 border-b border-solid border-slate-300 bg-slate-50">
           <div className="flex justify-between text-sm mb-2">
             <span className="text-slate-500">Fecha:</span>
             <span className="font-medium">{new Date(invoice.created_at).toLocaleDateString()}</span>
@@ -54,7 +54,7 @@ export default async function PublicInvoicePage({
 
         {/* Productos */}
         <div className="p-6">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Artículos</h3>
+          <h3 className="text-xs font-bold  tracking-wider text-slate-400 mb-4">Artículos</h3>
           <ul className="space-y-3">
             {items.map((item: any, i: number) => (
               <li key={i} className="flex justify-between text-sm">
@@ -71,7 +71,7 @@ export default async function PublicInvoicePage({
         <div className="p-6 bg-slate-50 border-t border-slate-200">
           <div className="flex justify-between items-center">
             <span className="text-lg font-bold text-slate-700">TOTAL</span>
-            <span className="text-2xl font-black text-green-600">
+            <span className="text-2xl font-semibold text-green-600">
               RD$ {invoice.total_amount?.toLocaleString() || '0.00'}
             </span>
           </div>

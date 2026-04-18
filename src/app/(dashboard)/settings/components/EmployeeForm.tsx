@@ -52,32 +52,32 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
 
   if (newCredentials) {
     return (
-      <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
+      <div className="border border-gray-200 bg-white p-8 shadow-sm rounded-xl space-y-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-black text-white">
+          <div className="p-2 bg-primary text-primary-foreground">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter italic">¡USUARIO CREADO!</h2>
+          <h2 className="text-3xl font-semibold   ">¡USUARIO CREADO!</h2>
         </div>
         
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+        <p className="text-xs font-bold text-gray-400   leading-relaxed">
           Copia esta información y envíasela a <strong className="text-black">{newCredentials.name}</strong> para que pueda ingresar al sistema.
         </p>
 
-        <div className="bg-gray-50 p-6 border-2 border-dashed border-gray-200 space-y-4">
+        <div className="bg-gray-50 p-6 border-2 border-solid border-gray-200 space-y-4">
           <div>
-            <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1 text-center">Usuario / Correo</p>
-            <p className="font-black text-sm text-black text-center select-all bg-white border-2 border-black p-2">{newCredentials.email}</p>
+            <p className="text-xs text-gray-500  font-semibold  mb-1 text-center">Usuario / Correo</p>
+            <p className="font-semibold text-sm text-black text-center select-all bg-white border border-gray-200 p-2">{newCredentials.email}</p>
           </div>
           <div>
-            <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1 text-center">Contraseña temporal</p>
-            <p className="font-black text-sm text-black text-center select-all bg-white border-2 border-black p-2">{newCredentials.pass}</p>
+            <p className="text-xs text-gray-500  font-semibold  mb-1 text-center">Contraseña temporal</p>
+            <p className="font-semibold text-sm text-black text-center select-all bg-white border border-gray-200 p-2">{newCredentials.pass}</p>
           </div>
         </div>
         
         <Button 
           onClick={() => setNewCredentials(null)}
-          className="w-full h-14 bg-black text-white font-black uppercase tracking-widest rounded-none hover:bg-zinc-800 transition-all"
+          className="w-full h-14 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800 transition-all"
         >
           + Crear otro empleado
         </Button>
@@ -86,48 +86,48 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
   }
 
   return (
-    <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-10">
-      <div className="flex items-center gap-4 border-b-2 border-black pb-6">
-        <div className="p-3 bg-black text-white">
+    <div className="border border-gray-200 bg-white p-8 shadow-sm rounded-xl space-y-10">
+      <div className="flex items-center gap-4 border-b border-gray-200 pb-6">
+        <div className="p-3 bg-primary text-primary-foreground">
           <UserPlus className="w-6 h-6" />
         </div>
         <div className="space-y-1">
-          <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Nuevo Ingreso</h2>
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Apertura de accesos para personal activo</p>
+          <h2 className="text-3xl font-semibold    leading-none">Nuevo Ingreso</h2>
+          <p className="text-xs font-semibold text-gray-400  ">Apertura de accesos para personal activo</p>
         </div>
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Nombre Completo</Label>
+            <Label className=" text-xs font-semibold  text-gray-400">Nombre Completo</Label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
-              <input name="name" required placeholder="EJ: MARIA LOPEZ" className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
+              <input name="name" required placeholder="EJ: MARIA LOPEZ" className="w-full h-14 pl-12 border border-gray-200 rounded-xl font-semibold text-sm   focus:outline-none placeholder:text-gray-100" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Teléfono</Label>
+              <Label className=" text-xs font-semibold  text-gray-400">Teléfono</Label>
               <div className="relative">
                 <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
-                <input name="phone" placeholder="809..." className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
+                <input name="phone" placeholder="809..." className="w-full h-14 pl-12 border border-gray-200 rounded-xl font-semibold text-sm   focus:outline-none placeholder:text-gray-100" />
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Contraseña</Label>
+              <Label className=" text-xs font-semibold  text-gray-400">Contraseña</Label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
-                <input name="password" type="password" required minLength={6} placeholder="******" className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
+                <input name="password" type="password" required minLength={6} placeholder="******" className="w-full h-14 pl-12 border border-gray-200 rounded-xl font-semibold text-sm   focus:outline-none placeholder:text-gray-100" />
               </div>
             </div>
           </div>
         </div>
         
         <div className="space-y-4">
-          <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400 italic">Módulos Autorizados</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 bg-gray-50 border-2 border-black border-dashed">
+          <Label className=" text-xs font-semibold  text-gray-400 ">Módulos Autorizados</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 bg-gray-50 border border-gray-200 border-solid">
             {ROUTES.map((route) => (
               <div key={route.id} className="flex items-center space-x-3 group">
                 <Checkbox 
@@ -137,15 +137,15 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
                     if (checked) setSelectedRoutes([...selectedRoutes, route.id]);
                     else if (route.id !== '/pos') setSelectedRoutes(selectedRoutes.filter(r => r !== route.id));
                   }}
-                  className="w-5 h-5 border-2 border-black rounded-none data-[state=checked]:bg-black"
+                  className="w-5 h-5 border border-gray-200 rounded-xl data-[state=checked]:bg-black"
                 />
-                <label htmlFor={route.id} className="text-[10px] font-black uppercase tracking-widest cursor-pointer group-hover:text-blue-600 transition-colors">{route.label}</label>
+                <label htmlFor={route.id} className="text-xs font-semibold   cursor-pointer group-hover:text-blue-600 transition-colors">{route.label}</label>
               </div>
             ))}
           </div>
         </div>
 
-        <Button type="submit" className="w-full h-16 bg-black text-white font-black uppercase tracking-[0.2em] rounded-none hover:bg-zinc-800 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none" disabled={isPending}>
+        <Button type="submit" className="w-full h-16 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800 transition-all shadow-sm rounded-xl active:translate-x-[2px] active:translate-y-[2px] active:shadow-none" disabled={isPending}>
           {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "VINCULAR EMPLEADO"}
         </Button>
       </form>

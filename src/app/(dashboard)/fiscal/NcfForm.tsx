@@ -45,7 +45,7 @@ export function NcfForm() {
         <input name="expiry" type="date" className="w-full p-2 border rounded-md text-sm outline-none" />
       </div>
 
-      <button disabled={isPending} type="submit" className="w-full bg-black text-white p-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+      <button disabled={isPending} type="submit" className="w-full bg-primary text-primary-foreground p-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
         {isPending ? 'Guardando...' : 'Guardar Secuencia'}
       </button>
     </form>

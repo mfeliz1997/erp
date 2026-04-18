@@ -89,38 +89,38 @@ export default async function CashRegisterPage() {
     if (!isAdmin) return null;
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <Card className="border border-gray-200 rounded-xl shadow-sm rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest">Base en Cajas</CardTitle>
+            <CardTitle className="text-xs font-semibold  ">Base en Cajas</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black">RD$ {stats.totalOpening.toLocaleString()}</div>
-            <p className="text-[10px] text-muted-foreground uppercase font-bold mt-1">
+            <div className="text-2xl font-semibold">RD$ {stats.totalOpening.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground  font-bold mt-1">
               Capital inicial en transito
             </p>
           </CardContent>
         </Card>
-        <Card className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <Card className="border border-gray-200 rounded-xl shadow-sm rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest">Ventas Hoy</CardTitle>
+            <CardTitle className="text-xs font-semibold  ">Ventas Hoy</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black">RD$ {stats.totalSales.toLocaleString()}</div>
-            <p className="text-[10px] text-muted-foreground uppercase font-bold mt-1">
+            <div className="text-2xl font-semibold">RD$ {stats.totalSales.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground  font-bold mt-1">
               Ventas brutas acumuladas
             </p>
           </CardContent>
         </Card>
-        <Card className="border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-black text-white">
+        <Card className="border border-gray-200 rounded-xl shadow-sm rounded-xl bg-primary text-primary-foreground">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest">Terminales Abiertas</CardTitle>
+            <CardTitle className="text-xs font-semibold  ">Terminales Abiertas</CardTitle>
             <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-black">{allOpenShifts.length}</div>
-            <p className="text-[10px] text-gray-400 uppercase font-bold mt-1">
+            <div className="text-2xl font-semibold">{allOpenShifts.length}</div>
+            <p className="text-xs text-gray-400  font-bold mt-1">
               Cajeros operando ahora
             </p>
           </CardContent>
@@ -136,26 +136,26 @@ export default async function CashRegisterPage() {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <div className="w-2 h-8 bg-black"></div>
-            <h2 className="text-2xl font-black uppercase tracking-tighter">Panel de Control de Cajas</h2>
+            <h2 className="text-2xl font-semibold  ">Panel de Control de Cajas</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Lista de Cajas Abiertas */}
             <div className="space-y-4">
-              <h3 className="text-xs font-black uppercase tracking-widest text-gray-500">Cajas actualmente activas</h3>
+              <h3 className="text-xs font-semibold   text-gray-500">Cajas actualmente activas</h3>
               {allOpenShifts.length === 0 ? (
-                 <div className="p-10 border-2 border-dashed border-gray-200 rounded-none text-center bg-white">
-                    <p className="text-xs font-bold text-gray-400 uppercase">No hay turnos abiertos en este momento</p>
+                 <div className="p-10 border-2 border-solid border-gray-200 rounded-xl text-center bg-white">
+                    <p className="text-xs font-bold text-gray-400 ">No hay turnos abiertos en este momento</p>
                  </div>
               ) : (
                 allOpenShifts.map((s) => (
-                  <div key={s.id} className="p-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex justify-between items-center bg-white">
+                  <div key={s.id} className="p-4 border border-gray-200 shadow-sm rounded-xl flex justify-between items-center bg-white">
                     <div>
-                      <p className="text-sm font-black uppercase">{s.cash_registers.name}</p>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase">Cajero: {s.profiles.full_name}</p>
+                      <p className="text-sm font-semibold ">{s.cash_registers.name}</p>
+                      <p className="text-xs text-gray-500 font-bold ">Cajero: {s.profiles.full_name}</p>
                     </div>
                     <div className="text-right">
-                      <Badge className="bg-green-600 rounded-none uppercase text-[9px] mb-1">Abierta</Badge>
+                      <Badge className="bg-green-600 rounded-xl  text-xs mb-1">Abierta</Badge>
                       <p className="text-xs font-bold">RD$ {s.opening_amount.toLocaleString()}</p>
                     </div>
                   </div>
@@ -164,8 +164,8 @@ export default async function CashRegisterPage() {
             </div>
 
             {/* Opción de abrir caja propia si se necesita */}
-            <div className="p-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-none">
-               <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 mb-4">Abrir mi propio turno</h3>
+            <div className="p-6 bg-gray-50 border-2 border-solid border-gray-300 rounded-xl">
+               <h3 className="text-xs font-semibold   text-gray-500 mb-4">Abrir mi propio turno</h3>
                {await renderOpenForm()}
             </div>
           </div>
@@ -187,10 +187,10 @@ export default async function CashRegisterPage() {
         <div className="max-w-md mx-auto">
           <div className="mb-6 flex justify-between items-center">
              <div>
-                <h1 className="text-2xl font-black uppercase tracking-tighter">Mi Turno Activo</h1>
-                <Badge className="bg-green-600 rounded-none uppercase text-[9px] mt-1 tracking-widest">En sesión</Badge>
+                <h1 className="text-2xl font-semibold  ">Mi Turno Activo</h1>
+                <Badge className="bg-green-600 rounded-xl  text-xs mt-1 ">En sesión</Badge>
              </div>
-             <p className="text-xs text-gray-500 font-bold uppercase text-right">Caja: {myOpenShift.cash_registers?.name}</p>
+             <p className="text-xs text-gray-500 font-bold  text-right">Caja: {myOpenShift.cash_registers?.name}</p>
           </div>
           <CloseShiftForm 
             shift={myOpenShift} 
@@ -217,10 +217,10 @@ export default async function CashRegisterPage() {
 
     if (!registers || registers.length === 0) {
       return (
-        <div className="p-8 border-2 border-dashed border-zinc-200 text-center space-y-4 bg-white">
+        <div className="p-8 border-2 border-solid border-zinc-200 text-center space-y-4 bg-white">
            <Monitor className="w-8 h-8 text-zinc-300 mx-auto" />
-           <h2 className="text-xl font-black uppercase tracking-tighter">No hay terminales</h2>
-           <p className="text-[10px] text-gray-500 font-bold uppercase">Configure cajas en Ajustes &gt; Cajas</p>
+           <h2 className="text-xl font-semibold  ">No hay terminales</h2>
+           <p className="text-xs text-gray-500 font-bold ">Configure cajas en Ajustes &gt; Cajas</p>
         </div>
       );
     }
@@ -240,9 +240,9 @@ export default async function CashRegisterPage() {
 
       {/* 📜 HISTORIAL */}
       <section className="space-y-4">
-        <div className="flex items-center gap-2 border-b-2 border-black pb-2">
+        <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
           <History className="h-5 w-5" />
-          <h2 className="text-xl font-black uppercase tracking-tighter">Cierres Recientes</h2>
+          <h2 className="text-xl font-semibold  ">Cierres Recientes</h2>
         </div>
         <ShiftHistoryTable shifts={processedRecentShifts} />
       </section>

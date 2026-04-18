@@ -40,9 +40,9 @@ export default async function WorkshopPage() {
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-zinc-400">
             <Wrench className="w-5 h-5" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] leading-none">Workshop Service</span>
+            <span className="text-xs font-bold   leading-none">Workshop Service</span>
           </div>
-          <h1 className="text-6xl font-black uppercase tracking-tighter leading-none">Taller</h1>
+          <h1 className="text-6xl font-semibold   leading-none">Taller</h1>
           <p className="text-zinc-500 font-medium text-sm max-w-lg">
             Gestión de equipos, diagnósticos y flujo de reparaciones en tiempo real.
           </p>
