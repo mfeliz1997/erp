@@ -32,12 +32,13 @@ export async function bulkCreateProductsAction(products: any[]) {
     const preparedProducts = products.map(p => ({
       tenant_id: profile.tenant_id,
       name: p.name,
-      description: p.description || null,
+      metadata: { description: p.description || null },
       cost_price: parseFloat(p.cost_price) || 0,
       price: parseFloat(p.price) || 0,
       stock: parseInt(p.stock) || 0,
+      min_stock_alert: 10,
       barcode: p.barcode || null,
-      category: p.category || "general",
+      type: p.category || "general",
     }));
 
     const CHUNK_SIZE = 500;
