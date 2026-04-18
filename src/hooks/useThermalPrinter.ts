@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+// @ts-expect-error No type declarations available for this package
 import EscPosEncoder from 'esc-pos-encoder';
 import { toast } from 'sonner';
 
@@ -16,7 +17,7 @@ export function useThermalPrinter() {
   const [isPrinting, setIsPrinting] = useState(false);
 
   const connectBluetooth = async () => {
-    if (typeof window !== "undefined" && !navigator.bluetooth) {
+    if (typeof window !== "undefined" && !('bluetooth' in navigator)) {
       toast.error("Tu navegador no soporta Web Bluetooth o está desactivado.");
       return null;
     }
@@ -27,7 +28,8 @@ export function useThermalPrinter() {
         filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }], // Generic Serial
         optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
       });
-      const server = await device.gatt.connect();
+      const server = await device.gatt?.connect();
+      if (!server) throw new Error("GATT server no disponible");
       const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
       const characteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
       return characteristic;
@@ -47,7 +49,7 @@ export function useThermalPrinter() {
   };
 
   const connectUSB = async () => {
-    if (typeof window !== "undefined" && !navigator.serial) {
+    if (typeof window !== "undefined" && !('serial' in navigator)) {
       toast.error("Tu navegador no soporta Web Serial (USB) o está desactivado.");
       return null;
     }

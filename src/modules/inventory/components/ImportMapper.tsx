@@ -37,7 +37,7 @@ export function ImportMapper() {
       skipEmptyLines: true,
       complete: async (results) => {
         if (results.data.length > 0) {
-          const cols = Object.keys(results.data[0]);
+          const cols = Object.keys(results.data[0] as Record<string, unknown>);
           setFileData(results.data);
           setHeaders(cols);
           setStatus("mapping_ai");
