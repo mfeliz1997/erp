@@ -114,7 +114,7 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                       <WhatsappShareButton 
                         invoiceId={inv.id}
                         phone={""}
-                        customerName={inv.customer_name}
+                        customerName={inv.customer_name ?? undefined}
                         total={inv.total}
                       />
                     </div>
@@ -186,7 +186,7 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                     <WhatsappShareButton 
                       invoiceId={inv.id}
                       phone={""}
-                      customerName={inv.customer_name}
+                      customerName={inv.customer_name ?? undefined}
                       total={inv.total}
                     />
                  </div>
