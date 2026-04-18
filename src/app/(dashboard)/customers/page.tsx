@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
-import { Search, Users } from "lucide-react";
+import { Search, Users, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { CustomerTable } from "@/modules/customers/components/CustomerTable";
 import { CustomerFormDialog } from "@/modules/customers/components/CustomerFormDialog";
 
-export default async function CustomersPage({ searchParams }: { searchParams: { q?: string } }) {
+export default async function CustomersPage(props: { searchParams: Promise<{ q?: string }> }) {
+  const searchParams = await props.searchParams;
   const query = searchParams.q || "";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -34,25 +35,27 @@ export default async function CustomersPage({ searchParams }: { searchParams: { 
   const { data: customers } = await fetchQuery;
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-10">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-100 pb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="w-5 h-5 text-zinc-400" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 leading-none">CRM</span>
+    <div className="p-6 max-w-7xl mx-auto space-y-12 pb-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b-4 border-black pb-10">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+             <div className="p-2 bg-black text-white">
+                <Users className="w-5 h-5" />
+             </div>
+             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Directorio CRM</span>
           </div>
-          <h1 className="text-5xl font-black uppercase tracking-tighter leading-none">Clientes</h1>
-          <p className="text-slate-400 font-medium mt-2 text-sm uppercase tracking-widest">Directorio de Cuentas y Créditos</p>
+          <h1 className="text-6xl font-black uppercase tracking-tighter italic leading-none">Clientes</h1>
+          <p className="text-gray-400 font-bold text-xs uppercase tracking-widest pl-1">Gestión de cuentas y límites de crédito</p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <form className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <Input 
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+          <form className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+            <input 
                 name="q"
                 defaultValue={query}
-                placeholder="Buscar cliente..." 
-                className="pl-10 h-10 w-64 rounded-none border-zinc-200 focus-visible:ring-black"
+                placeholder="BUSCAR POR NOMBRE O RNC..." 
+                className="pl-10 h-12 w-full md:w-80 rounded-none border-2 border-black focus:outline-none focus:ring-0 text-xs font-black uppercase tracking-widest placeholder:text-gray-300"
             />
           </form>
           
@@ -60,7 +63,9 @@ export default async function CustomersPage({ searchParams }: { searchParams: { 
         </div>
       </div>
 
-      <CustomerTable customers={customers || []} />
+      <div className="border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+        <CustomerTable customers={customers || []} />
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { formatProductMetadata, Product } from '@/types/inventory'; 
 import { DeleteButton } from './DeleteButton';
 import { ImportModal } from '@/modules/inventory/components/ImportModal';
+import { Search, Package, Settings } from "lucide-react";
 
 // Next.js 15: searchParams es una promesa
 export default async function InventoryPage({ 
@@ -57,138 +58,192 @@ export default async function InventoryPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 max-w-7xl mx-auto space-y-10 pb-20">
       {/* Encabezado y Acciones (Baja Fricción) */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b-4 border-black pb-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Inventario</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Gestiona tus productos, niveles de stock y precios.
+          <h1 className="text-4xl font-black uppercase tracking-tighter italic">Inventario</h1>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
+            Gestión centralizada de existencias y costos
           </p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <ImportModal />
           <Link 
             href="/inventory/new" 
-            className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium"
+            className="flex-1 md:flex-none bg-black text-white px-6 py-3 rounded-none text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             + Nuevo Producto
           </Link>
         </div>
       </div>
 
-      {/* Pestañas de Filtro Rápidas */}
-      <div className="flex items-center gap-2 text-sm">
-        <Link href="/inventory" className={`px-4 py-2 rounded-full font-medium ${currentFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-          Todos
-        </Link>
-        <Link href="/inventory?filter=low_stock" className={`px-4 py-2 rounded-full font-medium ${currentFilter === 'low_stock' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-          Bajo Stock
-        </Link>
-        <Link href="/inventory?filter=out_of_stock" className={`px-4 py-2 rounded-full font-medium ${currentFilter === 'out_of_stock' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-          Agotados
-        </Link>
+      {/* Buscador y Pestañas */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <form className="relative flex-1 group">
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black transition-transform group-focus-within:scale-110" />
+           <input 
+              name="q"
+              defaultValue={""}
+              placeholder="BUSCAR PRODUCTO POR NOMBRE O CÓDIGO..." 
+              className="w-full pl-12 h-14 border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-none transition-all font-black uppercase tracking-widest text-xs placeholder:text-gray-200"
+           />
+        </form>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Link href="/inventory" className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${currentFilter === 'all' ? 'bg-black text-white' : 'bg-white text-black hover:bg-gray-50'}`}>
+            Todos
+          </Link>
+          <Link href="/inventory?filter=low_stock" className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${currentFilter === 'low_stock' ? 'bg-yellow-400 text-black' : 'bg-white text-black hover:bg-gray-50'}`}>
+            Bajo Stock
+          </Link>
+          <Link href="/inventory?filter=out_of_stock" className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black transition-all ${currentFilter === 'out_of_stock' ? 'bg-red-600 text-white' : 'bg-white text-black hover:bg-gray-50'}`}>
+            Agotados
+          </Link>
+        </div>
       </div>
 
-      {/* Tabla de Datos Moderna */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="p-4 text-sm font-semibold text-gray-600 w-16">Foto</th>
-                <th className="p-4 text-sm font-semibold text-gray-600">Nombre</th>
-                {isAdmin && <th className="p-4 text-sm font-semibold text-gray-600">Costo (Privado)</th>}
-                <th className="p-4 text-sm font-semibold text-gray-600">Precio Venta</th>
-                <th className="p-4 text-sm font-semibold text-gray-600">Stock</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 text-right">Acciones</th>
+      {/* Vista de Escritorio (Tabla) */}
+      <div className="hidden lg:block border-2 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-gray-50 border-b-2 border-black">
+              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black w-20">Foto</th>
+              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black">Identificación</th>
+              {isAdmin && <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black">Costo</th>}
+              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black">Precio Venta</th>
+              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black">Estado Stock</th>
+              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-black text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {inventory.length === 0 ? (
+              <tr>
+                <td colSpan={isAdmin ? 6 : 5} className="p-16 text-center text-[10px] font-black uppercase text-gray-400 italic">
+                  No se han encontrado registros
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {inventory.length === 0 ? (
-                <tr>
-                  <td colSpan={isAdmin ? 6 : 5} className="p-12 text-center text-gray-500">
-                    No se encontraron productos con estos filtros.
-                  </td>
-                </tr>
-              ) : (
-                inventory.map((item) => {
-                  const isOutOfStock = item.stock === 0;
-                  const isLowStock = item.stock > 0 && item.stock <= (item.min_stock_alert || 10);
+            ) : (
+              inventory.map((item) => {
+                const isOutOfStock = item.stock === 0;
+                const isLowStock = item.stock > 0 && item.stock <= (item.min_stock_alert || 10);
 
-                  return (
-                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                      {/* FOTO (Placeholder por ahora) */}
-                      <td className="p-4">
-                        <div className="h-10 w-10 bg-gray-200 rounded-md overflow-hidden flex items-center justify-center">
-                          {item.image_url ? (
-                            <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
-                          ) : (
-                            <span className="text-xs text-gray-400">Img</span>
-                          )}
-                        </div>
+                return (
+                  <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
+                    <td className="p-4">
+                      <div className="h-12 w-12 border-2 border-black overflow-hidden flex items-center justify-center bg-gray-100">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <Package className="w-6 h-6 text-gray-300" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <p className="text-xs font-black uppercase tracking-tighter line-clamp-1">{item.name}</p>
+                      <p className="text-[9px] font-bold text-gray-400 uppercase mt-0.5">
+                        {item.type} 
+                        {formatProductMetadata(item.type, item.metadata) && ` • ${formatProductMetadata(item.type, item.metadata)}`}
+                      </p>
+                    </td>
+                    {isAdmin && (
+                      <td className="p-4 text-xs font-bold text-gray-500">
+                        {item.cost_price ? `RD$ ${item.cost_price.toLocaleString()}` : '---'}
                       </td>
+                    )}
+                    <td className="p-4 text-sm font-black italic">RD$ {item.price.toLocaleString()}</td>
+                    <td className="p-4">
+                      <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest border 
+                        ${isOutOfStock ? 'bg-red-50 text-red-700 border-red-200' : 
+                          isLowStock ? 'bg-yellow-50 text-yellow-800 border-yellow-200' : 
+                          'bg-green-50 text-green-700 border-green-200'}`}
+                      >
+                        {isOutOfStock ? 'AGOTADO' : `${item.stock} UNIDADES`}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+                        {(isAdmin || profile?.role === 'inventory') && (
+                           <Link href={`/inventory/${item.id}/edit`} className="p-2 border border-black hover:bg-black hover:text-white">
+                             <Settings className="w-4 h-4" />
+                           </Link>
+                        )}
+                        <DeleteButton productId={item.id} />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
-                      {/* NOMBRE Y DETALLES */}
-                  <td className="p-4">
-  <p className="text-sm font-bold text-gray-900">{item.name}</p>
-  <p className="text-xs text-gray-500 mt-0.5 capitalize">
-    {item.type} 
-    {/* La UI solo llama a la función, no le importa si es chasis, imei o lote de medicina */}
-    {formatProductMetadata(item.type, item.metadata) && ` • ${formatProductMetadata(item.type, item.metadata)}`}
-  </p>
-</td>
+      {/* Vista de Móvil (Grid de Tarjetas) */}
+      <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+        {inventory.length === 0 ? (
+          <div className="col-span-full p-20 text-center border-4 border-dashed border-gray-100 font-black uppercase text-gray-300 tracking-widest">
+            Sin resultados
+          </div>
+        ) : (
+          inventory.map((item) => {
+            const isOutOfStock = item.stock === 0;
+            const isLowStock = item.stock > 0 && item.stock <= (item.min_stock_alert || 10);
 
-                      {/* COSTO PRIVADO (Solo Admin) */}
-                      {isAdmin && (
-                        <td className="p-4 text-sm text-gray-500 font-medium">
-                          {item.cost_price ? `RD$ ${item.cost_price.toLocaleString('es-DO')}` : 'N/D'}
-                        </td>
-                      )}
+            return (
+              <div key={item.id} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6 relative overflow-hidden">
+                <div className="flex items-start gap-6">
+                  <div className="h-20 w-20 border-2 border-black shrink-0 bg-gray-50 flex items-center justify-center overflow-hidden">
+                    {item.image_url ? (
+                      <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <Package className="w-8 h-8 text-gray-200" />
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <p className="font-black text-lg uppercase tracking-tighter italic leading-none">{item.name}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      {item.type} {formatProductMetadata(item.type, item.metadata) && ` • ${formatProductMetadata(item.type, item.metadata)}`}
+                    </p>
+                  </div>
+                </div>
 
-                      {/* PRECIO PÚBLICO */}
-                      <td className="p-4 text-sm text-gray-900 font-bold">
-                        RD$ {item.price.toLocaleString('es-DO')}
-                      </td>
+                <div className="grid grid-cols-2 gap-4 border-y-2 border-black border-dashed py-6">
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Precio Venta</p>
+                    <p className="font-black text-xl italic">RD$ {item.price.toLocaleString()}</p>
+                  </div>
+                  {isAdmin && (
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Costo</p>
+                      <p className="font-bold text-sm text-gray-500">RD$ {item.cost_price?.toLocaleString() || '---'}</p>
+                    </div>
+                  )}
+                </div>
 
-                      {/* STOCK Y ALERTAS VISUALES */}
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold 
-                            ${isOutOfStock ? 'bg-red-100 text-red-700' : 
-                              isLowStock ? 'bg-yellow-100 text-yellow-800' : 
-                              'bg-green-100 text-green-700'}`}
-                          >
-                            {isOutOfStock ? 'AGOTADO' : `${item.stock} en stock`}
-                          </span>
-                          {isLowStock && (
-                            <span title={`Alerta: Menos de ${item.min_stock_alert || 10} unidades`} className="text-yellow-600 font-bold text-sm">
-                              ⚠️
-                            </span>
-                          )}
-                        </div>
-                      </td>
+                <div className="flex items-center justify-between gap-4">
+                  <span className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)]
+                    ${isOutOfStock ? 'bg-red-600 text-white' : 
+                      isLowStock ? 'bg-yellow-400 text-black' : 
+                      'bg-green-500 text-white'}`}
+                  >
+                    {isOutOfStock ? 'AGOTADO' : `${item.stock} UNIDADES`}
+                  </span>
 
-                      {/* ACCIONES DE PERMISOS */}
-                      <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          {/* El botón de editar lo puedes llevar a otra vista dinámica */}
-                          {(isAdmin || profile?.role === 'inventory') && (
-                             <Link href={`/inventory/${item.id}/edit`} className="text-xs font-medium text-blue-600 hover:text-blue-800 px-2 py-1 bg-blue-50 rounded">
-                               Editar
-                             </Link>
-                          )}
-                          <DeleteButton productId={item.id} />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                  <div className="flex items-center gap-2">
+                    {(isAdmin || profile?.role === 'inventory') && (
+                      <Link href={`/inventory/${item.id}/edit`} className="p-3 border-2 border-black bg-black text-white active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                        <Settings className="w-5 h-5" />
+                      </Link>
+                    )}
+                    <DeleteButton productId={item.id} />
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

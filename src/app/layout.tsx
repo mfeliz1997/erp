@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="antialiased bg-gray-50 text-gray-900">
          <TooltipProvider>
             {children}
-         </TooltipProvider>
+         </TooltipProvider> 
          <Toaster richColors position="top-right" />
       </body>
     </html>

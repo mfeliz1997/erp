@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from 'sonner';
+import { UserPlus, ShieldCheck, Phone, Lock, User, Loader2 } from "lucide-react";
 
 const ROUTES = [
   { id: '/overview', label: 'Resumen' },
@@ -20,11 +21,9 @@ const ROUTES = [
 ];
 
 export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
-  const formRef = useRef<HTMLFormElement>(null); // SOLUCIÓN AL ERROR DEL RESET
+  const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
   const [selectedRoutes, setSelectedRoutes] = useState<string[]>(['/pos']);
-  
-  // NUEVO: Estado para guardar la info recién creada y mostrársela al dueño
   const [newCredentials, setNewCredentials] = useState<{name: string, email: string, pass: string} | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -34,7 +33,6 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
     const formData = new FormData(e.currentTarget);
     selectedRoutes.forEach(r => formData.append('routes', r));
 
-    // Capturamos los datos ANTES de mandarlos al servidor para mostrarlos luego
     const rawName = formData.get('name') as string;
     const rawPass = formData.get('password') as string;
     const generatedEmail = `${rawName.toLowerCase().replace(/\s+/g, '')}@${tenantDomain}.com`;
@@ -43,103 +41,114 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
 
     if (result.success) {
       toast.success("Empleado creado exitosamente");
-      formRef.current?.reset(); // Reset seguro usando useRef
+      formRef.current?.reset();
       setSelectedRoutes(['/pos']);
-      
-      // Mostramos la pantalla de éxito con los datos
-      setNewCredentials({
-        name: rawName,
-        email: generatedEmail,
-        pass: rawPass
-      });
+      setNewCredentials({ name: rawName, email: generatedEmail, pass: rawPass });
     } else {
       toast.error(result.error);
     }
     setIsPending(false);
   };
 
-  // Si acabamos de crear un usuario, mostramos sus credenciales
   if (newCredentials) {
     return (
-      <Card className="border-green-200 shadow-sm bg-green-50/30">
-        <CardHeader>
-          <CardTitle className="text-green-700 flex items-center gap-2">
-            <span>✅</span> ¡Usuario Creado!
-          </CardTitle>
-          <CardDescription>
-            Copia esta información y envíasela a <strong>{newCredentials.name}</strong> para que pueda ingresar al sistema.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-white p-4 rounded-lg border border-green-100 space-y-2 relative">
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-bold">Correo de Acceso (Usuario)</p>
-              <p className="font-mono text-sm text-black font-semibold select-all">{newCredentials.email}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-bold">Contraseña</p>
-              <p className="font-mono text-sm text-black font-semibold select-all">{newCredentials.pass}</p>
-            </div>
+      <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-black text-white">
+            <ShieldCheck className="w-6 h-6" />
           </div>
-          
-          <Button 
-            variant="outline" 
-            className="w-full border-green-200 text-green-700 hover:bg-green-50"
-            onClick={() => setNewCredentials(null)}
-          >
-            + Crear otro empleado
-          </Button>
-        </CardContent>
-      </Card>
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic">¡USUARIO CREADO!</h2>
+        </div>
+        
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+          Copia esta información y envíasela a <strong className="text-black">{newCredentials.name}</strong> para que pueda ingresar al sistema.
+        </p>
+
+        <div className="bg-gray-50 p-6 border-2 border-dashed border-gray-200 space-y-4">
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1 text-center">Usuario / Correo</p>
+            <p className="font-black text-sm text-black text-center select-all bg-white border-2 border-black p-2">{newCredentials.email}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-1 text-center">Contraseña temporal</p>
+            <p className="font-black text-sm text-black text-center select-all bg-white border-2 border-black p-2">{newCredentials.pass}</p>
+          </div>
+        </div>
+        
+        <Button 
+          onClick={() => setNewCredentials(null)}
+          className="w-full h-14 bg-black text-white font-black uppercase tracking-widest rounded-none hover:bg-zinc-800 transition-all"
+        >
+          + Crear otro empleado
+        </Button>
+      </div>
     );
   }
 
-  // Formulario Normal
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Nuevo Empleado</CardTitle>
-        <CardDescription>Crea un acceso interno para tu personal.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-2">
-            <Label>Nombre del Empleado</Label>
-            <Input name="name" required placeholder="Ej: Maria Lopez" />
-          </div>
-          <div className="grid gap-2">
-            <Label>Teléfono</Label>
-            <Input name="phone" placeholder="809..." />
-          </div>
-          <div className="grid gap-2">
-            <Label>Contraseña</Label>
-            <Input name="password" type="password" required minLength={6} placeholder="******" />
-          </div>
-          
-          <div className="space-y-3">
-            <Label>Permisos de acceso</Label>
-            <div className="grid grid-cols-2 gap-2 p-3 bg-gray-50 rounded-md border">
-              {ROUTES.map((route) => (
-                <div key={route.id} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={route.id}
-                    checked={selectedRoutes.includes(route.id)}
-                    onCheckedChange={(checked) => {
-                      if (checked) setSelectedRoutes([...selectedRoutes, route.id]);
-                      else if (route.id !== '/pos') setSelectedRoutes(selectedRoutes.filter(r => r !== route.id));
-                    }}
-                  />
-                  <label htmlFor={route.id} className="text-xs cursor-pointer">{route.label}</label>
-                </div>
-              ))}
+    <div className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-10">
+      <div className="flex items-center gap-4 border-b-2 border-black pb-6">
+        <div className="p-3 bg-black text-white">
+          <UserPlus className="w-6 h-6" />
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Nuevo Ingreso</h2>
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Apertura de accesos para personal activo</p>
+        </div>
+      </div>
+
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Nombre Completo</Label>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+              <input name="name" required placeholder="EJ: MARIA LOPEZ" className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Creando..." : "Crear Cuenta de Empleado"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Teléfono</Label>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+                <input name="phone" placeholder="809..." className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Contraseña</Label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
+                <input name="password" type="password" required minLength={6} placeholder="******" className="w-full h-14 pl-12 border-2 border-black rounded-none font-black text-sm uppercase tracking-widest focus:outline-none placeholder:text-gray-100" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400 italic">Módulos Autorizados</Label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 bg-gray-50 border-2 border-black border-dashed">
+            {ROUTES.map((route) => (
+              <div key={route.id} className="flex items-center space-x-3 group">
+                <Checkbox 
+                  id={route.id}
+                  checked={selectedRoutes.includes(route.id)}
+                  onCheckedChange={(checked) => {
+                    if (checked) setSelectedRoutes([...selectedRoutes, route.id]);
+                    else if (route.id !== '/pos') setSelectedRoutes(selectedRoutes.filter(r => r !== route.id));
+                  }}
+                  className="w-5 h-5 border-2 border-black rounded-none data-[state=checked]:bg-black"
+                />
+                <label htmlFor={route.id} className="text-[10px] font-black uppercase tracking-widest cursor-pointer group-hover:text-blue-600 transition-colors">{route.label}</label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full h-16 bg-black text-white font-black uppercase tracking-[0.2em] rounded-none hover:bg-zinc-800 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none" disabled={isPending}>
+          {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "VINCULAR EMPLEADO"}
+        </Button>
+      </form>
+    </div>
   );
 }

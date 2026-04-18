@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { updateWebsiteSettings } from '@/modules/settings/actions';
 import { toast } from 'sonner';
 import { createBrowserClient } from "@supabase/ssr";
-import { Upload, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, Image as ImageIcon, Loader2, Globe, Palette, Tablet } from "lucide-react";
 
-export function WebsiteSettingsForm({ tenant }: { tenant: any }) {
+export default function WebsiteSettingsForm({ tenant }: { tenant: any }) {
   const [isPending, setIsPending] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [logoUrl, setLogoUrl] = useState(tenant.logo_url || '');
@@ -53,8 +52,6 @@ export function WebsiteSettingsForm({ tenant }: { tenant: any }) {
     e.preventDefault();
     setIsPending(true);
     const formData = new FormData(e.currentTarget);
-    
-    // Agregamos el logoUrl actualizado al formData
     formData.set('logo_url', logoUrl);
     
     const result = await updateWebsiteSettings(formData);
@@ -68,55 +65,65 @@ export function WebsiteSettingsForm({ tenant }: { tenant: any }) {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
-      <Card>
-        <CardHeader>
-          <CardTitle>Tu Catálogo en Línea</CardTitle>
-          <CardDescription>
-            Personaliza cómo se ve tu tienda para tus clientes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid gap-2 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <Label className="text-slate-900 font-bold uppercase tracking-tighter">Subdominio de tu Web</Label>
-              <div className="flex items-center gap-2">
-                <span className="text-slate-400 font-mono text-sm">https://</span>
-                <Input 
+    <div className="max-w-4xl space-y-10">
+      <div className="flex items-center gap-4 border-b-2 border-black pb-6">
+        <div className="p-3 bg-black text-white shrink-0">
+          <Globe className="w-6 h-6" />
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Canal Público</h2>
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Identidad visual y catálogo en línea</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="border-4 border-black bg-white p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-12">
+        {/* Subdominio Section */}
+        <div className="space-y-6">
+          <h3 className="text-sm font-black uppercase tracking-widest text-black flex items-center gap-2">
+            <Tablet className="w-4 h-4" /> 1. Dirección Web
+          </h3>
+          <div className="p-6 bg-gray-50 border-2 border-black border-dashed space-y-4">
+            <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">URL Personalizada</Label>
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <span className="text-gray-400 font-black text-xs uppercase hidden sm:inline">HTTPS://</span>
+              <div className="flex-1 flex w-full">
+                <input 
                   name="subdomain" 
                   defaultValue={tenant.subdomain} 
                   required
                   placeholder="mi-tienda" 
-                  className="font-mono h-10 border-slate-300 focus:border-black rounded-none"
+                  className="flex-1 h-14 px-4 border-2 border-black rounded-none font-black text-lg focus:outline-none placeholder:text-gray-100"
                 />
-                <span className="text-slate-400 font-mono text-sm">.beral.do</span>
               </div>
-              <p className="text-[11px] text-slate-500">Este es el enlace público de tu negocio.</p>
+              <span className="text-black font-black text-xs uppercase italic">.BERAL.DO</span>
             </div>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Tus clientes usarán este enlace para ver tus productos y hacer pedidos.</p>
+          </div>
+        </div>
 
-            <div className="grid gap-4">
-              <Label className="uppercase font-bold text-xs tracking-widest text-gray-500">Identidad Visual</Label>
-              
-              <div className="flex flex-col md:flex-row gap-8 items-start">
-                 {/* Preview del Logo */}
-                 <div className="flex flex-col gap-2">
-                    <Label className="text-xs">Vista Previa Logo</Label>
-                    <div className="h-24 w-24 border-2 border-dashed border-gray-200 flex items-center justify-center bg-white overflow-hidden">
+        {/* Visual Identity Section */}
+        <div className="space-y-8">
+           <h3 className="text-sm font-black uppercase tracking-widest text-black flex items-center gap-2">
+            <Palette className="w-4 h-4" /> 2. Estética de Marca
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+             <div className="space-y-4">
+                <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Logo de Empresa</Label>
+                <div className="flex items-center gap-6">
+                   <div className="h-24 w-24 border-2 border-black flex items-center justify-center bg-gray-100 overflow-hidden shrink-0">
                       {logoUrl ? (
                          <img src={logoUrl} alt="Logo preview" className="w-full h-full object-cover" />
                       ) : (
-                         <div className="bg-black text-white w-full h-full flex items-center justify-center font-black text-3xl">
+                         <div className="bg-black text-white w-full h-full flex items-center justify-center font-black text-3xl italic">
                             {tenant.name.charAt(0).toUpperCase()}
                          </div>
                       )}
-                    </div>
-                 </div>
-
-                 {/* Upload Button */}
-                 <div className="flex-1 space-y-4">
-                    <div className="grid gap-2">
+                   </div>
+                   
+                   <div className="space-y-2">
                       <Label htmlFor="logo-upload" className="cursor-pointer">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-white border border-black hover:bg-gray-50 transition-colors font-bold text-xs uppercase tracking-widest">
+                        <div className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-black hover:bg-gray-50 transition-all font-black text-[10px] uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
                           {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                           {logoUrl ? 'Cambiar Logo' : 'Subir Logo'}
                         </div>
@@ -128,42 +135,49 @@ export function WebsiteSettingsForm({ tenant }: { tenant: any }) {
                         onChange={handleFileUpload}
                         className="hidden"
                       />
-                      <p className="text-[10px] text-gray-400">Recomendado: Cuadrado 512x512px (PNG, JPG)</p>
-                    </div>
+                      <p className="text-[9px] text-gray-400 font-bold uppercase">PNG o JPG • Máx 2MB</p>
+                   </div>
+                </div>
+             </div>
 
-                    <div className="grid gap-2">
-                      <Label className="text-xs">Color de Marca</Label>
-                      <div className="flex gap-4 items-center">
-                        <Input type="color" name="public_color" defaultValue={tenant.settings?.public_color || '#000000'} className="w-16 h-10 p-1 cursor-pointer rounded-none border-black" />
-                        <span className="text-[10px] uppercase font-medium text-gray-400">Botones y Bordes</span>
-                      </div>
-                    </div>
-                 </div>
-              </div>
-            </div>
+             <div className="space-y-4">
+                <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Color Primario</Label>
+                <div className="flex gap-4 items-center p-3 border-2 border-black bg-white h-24">
+                  <input 
+                    type="color" 
+                    name="public_color" 
+                    defaultValue={tenant.settings?.public_color || '#000000'} 
+                    className="w-16 h-12 p-1 cursor-pointer rounded-none border-2 border-black bg-white" 
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-[10px] uppercase font-black text-black tracking-widest">Acento visual</span>
+                    <span className="text-[9px] uppercase font-medium text-gray-400">Botones y bordes del catálogo</span>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </div>
 
-            <div className="grid gap-2">
-              <Label className="uppercase font-bold text-xs tracking-widest text-gray-500">Contacto para Pedidos</Label>
-              <div className="flex items-center gap-2 border border-gray-200 bg-white p-1">
-                <div className="bg-gray-100 px-3 py-2 text-sm text-gray-500 font-bold border-r border-gray-200">+</div>
-                <Input 
-                  name="whatsapp_number" 
-                  type="tel" 
-                  defaultValue={tenant.settings?.whatsapp_number || ''} 
-                  placeholder="18091234567" 
-                  className="border-none shadow-none focus-visible:ring-0"
-                />
-              </div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-tight">Incluye el código de país sin el símbolo +. Ej: 18091234567</p>
-            </div>
+        {/* Whatsapp Pedidos */}
+        <div className="space-y-4">
+          <Label className="uppercase text-[10px] font-black tracking-widest text-gray-400">Número de Pedidos (WhatsApp)</Label>
+          <div className="flex items-center border-2 border-black bg-white h-16">
+            <div className="bg-gray-100 px-5 flex items-center justify-center h-full text-lg font-black border-r-2 border-black">+</div>
+            <input 
+              name="whatsapp_number" 
+              type="tel" 
+              defaultValue={tenant.settings?.whatsapp_number || ''} 
+              placeholder="18091234567" 
+              className="flex-1 px-4 border-none focus:outline-none font-black text-lg tracking-widest placeholder:text-gray-100"
+            />
+          </div>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Incluye código de país (Ej: 1 para USA/RD, 52 para México) sin el símbolo +</p>
+        </div>
 
-            <Button type="submit" disabled={isPending || isUploading} className="w-full h-12 bg-black hover:bg-gray-900 text-white font-bold uppercase tracking-[0.2em] rounded-none shadow-xl">
-              {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-              Actualizar Catálogo Público
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        <Button type="submit" disabled={isPending || isUploading} className="w-full h-16 bg-black hover:bg-zinc-800 text-white font-black uppercase tracking-[0.2em] rounded-none shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+          {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : "ACTUALIZAR PRESENCIA WEB"}
+        </Button>
+      </form>
     </div>
   );
 }
