@@ -7,7 +7,8 @@ import { EditEmployeeModal } from "./components/EditEmployeeModal";
 import WebsiteSettingsForm from "./website/page";
 import { RegisterManager } from "@/modules/settings/components/RegisterManager";
 import { PrinterSettingsForm } from "./components/PrinterSettingsForm";
-import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck } from "lucide-react";
+import { AdminPinForm } from "@/modules/settings/components/AdminPinForm";
+import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck, Lock } from "lucide-react";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -51,17 +52,17 @@ export default async function SettingsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-200 pb-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3">
-             <div className="p-2 bg-primary text-primary-foreground shrink-0">
-                <Settings className="w-5 h-5" />
-             </div>
-             <span className="text-xs font-semibold   text-gray-400">Panel de Control</span>
+            <div className="p-2 bg-primary text-primary-foreground shrink-0">
+              <Settings className="w-5 h-5" />
+            </div>
+            <span className="text-xs font-semibold   text-gray-400">Panel de Control</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-semibold    leading-none">Settings</h1>
           <p className="text-gray-400 font-bold text-xs   pl-1">Gestión de espacio de trabajo y equipo</p>
         </div>
 
         <div className="flex items-center">
-           <div className="px-5 py-2 bg-primary text-primary-foreground text-xs font-semibold   w-full md:w-auto text-center">Modo Pro Administrador</div>
+          <div className="px-5 py-2 bg-primary text-primary-foreground text-xs font-semibold   w-full md:w-auto text-center">Modo Pro Administrador</div>
         </div>
       </div>
 
@@ -74,10 +75,11 @@ export default async function SettingsPage() {
             { v: 'integrations', l: 'Canales', i: <MessageSquare className="w-3 h-3" /> },
             { v: 'printing', l: 'Impresión', i: <PrinterIcon className="w-3 h-3" /> },
             { v: 'fiscal', l: 'Fiscal', i: <ShieldCheck className="w-3 h-3" /> },
+            { v: 'security', l: 'Seguridad', i: <Lock className="w-3 h-3" /> },
           ].map(tab => (
-            <TabsTrigger 
-              key={tab.v} 
-              value={tab.v} 
+            <TabsTrigger
+              key={tab.v}
+              value={tab.v}
               className="rounded-xl border-b-4 border-transparent data-[state=active]:border-black data-[state=active]:bg-black data-[state=active]:text-white px-6 py-4 text-xs font-semibold   transition-all gap-2 shrink-0 h-full"
             >
               {tab.i} {tab.l}
@@ -91,7 +93,7 @@ export default async function SettingsPage() {
 
             <div className="space-y-6">
               <h3 className="text-lg font-semibold    flex items-center gap-2">
-                 <div className="w-1.5 h-6 bg-black" /> Personal Activo
+                <div className="w-1.5 h-6 bg-black" /> Personal Activo
               </h3>
               <div className="space-y-4">
                 {employees?.map((emp: any) => (
@@ -144,6 +146,12 @@ export default async function SettingsPage() {
               <p className="text-xl font-semibold   text-gray-300">Modulo de Cumplimiento Fiscal</p>
               <p className="text-xs font-bold text-gray-300  ">Funcionalidad en fase de auditoría interna</p>
             </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="security" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="max-w-md mx-auto py-12">
+            <AdminPinForm currentPin={tenantData?.admin_pin} />
           </div>
         </TabsContent>
       </Tabs>

@@ -226,3 +226,32 @@ export async function updateWebsiteSettings(formData: FormData) {
     return { success: false, error: err.message };
   }
 }
+
+export async function updateAdminPinAction(pin: string) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("No autorizado");
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id, role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "admin") throw new Error("Acceso denegado");
+    if (pin.length !== 4 || isNaN(parseInt(pin))) throw new Error("El PIN debe ser de 4 dígitos numéricos");
+
+    const { error } = await supabaseAdmin
+      .from("tenants")
+      .update({ admin_pin: pin })
+      .eq("id", profile.tenant_id);
+
+    if (error) throw new Error(error.message);
+
+    revalidatePath("/settings");
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}

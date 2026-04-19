@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export function RegisterManager({ registers }: { registers: any[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const initialState: ActionState = { success: false, error: "" };
-  
+
   const [state, action, isPending] = useActionState(async (prev: ActionState, formData: FormData) => {
     const result = await createRegister(prev, formData);
     if (result.success) {
@@ -59,10 +59,10 @@ export function RegisterManager({ registers }: { registers: any[] }) {
             <form action={action} className="space-y-8 py-6">
               <div className="space-y-3">
                 <Label htmlFor="name" className=" text-xs font-semibold  text-gray-400">Nombre de la Terminal</Label>
-                <input 
-                  id="name" 
-                  name="name" 
-                  placeholder="EJ. PRINCIPAL-01" 
+                <input
+                  id="name"
+                  name="name"
+                  placeholder="EJ. PRINCIPAL-01"
                   autoFocus
                   className="w-full rounded-xl border border-gray-200 h-14 px-4 font-semibold text-xl   focus:outline-none placeholder:text-gray-100"
                 />
@@ -81,36 +81,36 @@ export function RegisterManager({ registers }: { registers: any[] }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {registers.length === 0 ? (
           <div className="col-span-full py-24 text-center border-4 border-solid border-gray-100 flex flex-col items-center justify-center space-y-6">
-              <Airplay className="w-16 h-16 text-gray-100 stroke-1" />
-              <p className="text-xs  font-semibold text-gray-300 ">Esperando vinculación de hardware POS</p>
+            <Airplay className="w-16 h-16 text-gray-100 stroke-1" />
+            <p className="text-xs  font-semibold text-gray-300 ">Esperando vinculación de hardware POS</p>
           </div>
         ) : (
           registers.map((reg) => (
             <div key={reg.id} className="group flex flex-col bg-white border border-gray-200 p-6 shadow-sm rounded-xl hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
               <div className="flex items-center justify-between mb-8">
-                 <div className={`p-4 border-2 transition-colors ${reg.is_active ? 'bg-primary text-primary-foreground border-black' : 'bg-white border-gray-100 text-gray-200'}`}>
-                    <Monitor className="w-6 h-6" />
-                 </div>
-                 <div className="text-right">
-                    <p className={`text-xs font-semibold   ${reg.is_active ? 'text-green-600' : 'text-gray-300'}`}>
-                      {reg.is_active ? "ESTADO: ACTIVO" : "ESTADO: OFF"}
-                    </p>
-                    <p className="text-xs font-semibold text-gray-400 mt-1 ">ID: {reg.id.slice(0,8)}</p>
-                 </div>
+                <div className={`p-4 border-2 transition-colors ${reg.is_active ? 'bg-primary text-primary-foreground border-black' : 'bg-white border-gray-100 text-gray-200'}`}>
+                  <Monitor className="w-6 h-6" />
+                </div>
+                <div className="text-right">
+                  <p className={`text-xs font-semibold   ${reg.is_active ? 'text-green-600' : 'text-gray-300'}`}>
+                    {reg.is_active ? "ESTADO: ACTIVO" : "ESTADO: OFF"}
+                  </p>
+                  <p className="text-xs font-semibold text-gray-400 mt-1 ">ID: {reg.id.slice(0, 8)}</p>
+                </div>
               </div>
-              
+
               <div className="space-y-4 flex-1">
-                 <h3 className="font-semibold text-2xl    text-black leading-none truncate">{reg.name}</h3>
-                 <div className="flex items-center gap-2 text-gray-400">
-                    <HelpCircle className="w-3 h-3" />
-                    <span className="text-xs font-semibold  ">Autorizada para Facturación</span>
-                 </div>
+                <h3 className="font-semibold text-2xl    text-black leading-none truncate">{reg.name}</h3>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <HelpCircle className="w-3 h-3" />
+                  <span className="text-xs font-semibold  ">Autorizada para Facturación</span>
+                </div>
               </div>
 
               <div className="mt-8 pt-6 border-t border-gray-100">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => handleToggle(reg.id, reg.is_active)}
                   className={`w-full rounded-xl h-12 px-6 font-semibold text-xs   border-2 transition-all ${reg.is_active ? 'text-red-600 border-red-600 hover:bg-red-50' : 'text-green-600 border-green-600 hover:bg-green-50'}`}
                 >

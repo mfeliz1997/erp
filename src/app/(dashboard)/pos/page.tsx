@@ -12,9 +12,20 @@ export default async function PosPage() {
     .eq('is_deleted', false)
     .order('created_at', { ascending: false });
 
+  const { data } = await supabase.auth.getUser();
+  const user = data?.user;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, can_sell_on_credit, max_credit_days')
+    .eq('id', user?.id)
+    .single();
+
   return (
-    <div className="h-full w-full">
-      <PosTerminal initialProducts={(products as Product[]) || []} />
+    <div className="fixed inset-0 lg:static lg:h-full lg:w-full bg-background overflow-hidden dashboard-page">
+      <PosTerminal 
+        initialProducts={(products as Product[]) || []} 
+        profile={profile}
+      />
     </div>
   );
 }

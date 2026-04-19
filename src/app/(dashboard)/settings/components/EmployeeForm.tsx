@@ -24,12 +24,12 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
   const [selectedRoutes, setSelectedRoutes] = useState<string[]>(['/pos']);
-  const [newCredentials, setNewCredentials] = useState<{name: string, email: string, pass: string} | null>(null);
+  const [newCredentials, setNewCredentials] = useState<{ name: string, email: string, pass: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
-    
+
     const formData = new FormData(e.currentTarget);
     selectedRoutes.forEach(r => formData.append('routes', r));
 
@@ -59,7 +59,7 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
           </div>
           <h2 className="text-3xl font-semibold   ">¡USUARIO CREADO!</h2>
         </div>
-        
+
         <p className="text-xs font-bold text-gray-400   leading-relaxed">
           Copia esta información y envíasela a <strong className="text-black">{newCredentials.name}</strong> para que pueda ingresar al sistema.
         </p>
@@ -74,8 +74,8 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
             <p className="font-semibold text-sm text-black text-center select-all bg-white border border-gray-200 p-2">{newCredentials.pass}</p>
           </div>
         </div>
-        
-        <Button 
+
+        <Button
           onClick={() => setNewCredentials(null)}
           className="w-full h-14 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800 transition-all"
         >
@@ -124,13 +124,13 @@ export function EmployeeForm({ tenantDomain }: { tenantDomain: string }) {
             </div>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           <Label className=" text-xs font-semibold  text-gray-400 ">Módulos Autorizados</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-6 bg-gray-50 border border-gray-200 border-solid">
             {ROUTES.map((route) => (
               <div key={route.id} className="flex items-center space-x-3 group">
-                <Checkbox 
+                <Checkbox
                   id={route.id}
                   checked={selectedRoutes.includes(route.id)}
                   onCheckedChange={(checked) => {

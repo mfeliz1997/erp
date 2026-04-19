@@ -30,7 +30,7 @@ export function EditEmployeeModal({ employee, children }: { employee: Employee, 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsPending(true);
-    
+
     const formData = new FormData(e.currentTarget);
     formData.append('employeeId', employee.id);
 
@@ -61,7 +61,7 @@ export function EditEmployeeModal({ employee, children }: { employee: Employee, 
             Modifica la contraseña o el número. Para que el usuario no pueda entrar más, selecciona "Desactivar empleado".
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-2">
             <Label>Nuevo Teléfono (Opcional)</Label>
@@ -71,7 +71,7 @@ export function EditEmployeeModal({ employee, children }: { employee: Employee, 
             <Label>Nueva Contraseña (Opcional)</Label>
             <Input name="password" type="password" minLength={6} placeholder="Dejar en blanco para no cambiar" />
           </div>
-          
+
           <div className="flex items-center space-x-2 p-3 bg-red-50 rounded-md border border-red-100">
             <Checkbox id={`deactivate-${employee.id}`} name="deactivate" />
             <label htmlFor={`deactivate-${employee.id}`} className="text-sm font-medium text-red-700 leading-none cursor-pointer">

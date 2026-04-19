@@ -15,6 +15,36 @@ export type PosActionState = {
 // ------------------------------------------------------------------
 
 // ------------------------------------------------------------------
+export async function validateAdminPin(pin: string): Promise<PosActionState> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "No autorizado" };
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.tenant_id) return { success: false, error: "Tenant no encontrado" };
+
+    const { data: tenant } = await supabase
+      .from("tenants")
+      .select("admin_pin")
+      .eq("id", profile.tenant_id)
+      .single();
+
+    if (tenant?.admin_pin === pin) {
+      return { success: true };
+    }
+
+    return { success: false, error: "PIN de administrador incorrecto" };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
 export async function processSaleAction(
   cart: CartItem[],
   total: number,
@@ -22,8 +52,9 @@ export async function processSaleAction(
   customerRnc: string,
   customerPhone: string,
   ncfType: "B01" | "B02",
-  paymentMethod: "cash" | "credit",
+  paymentMethod: "cash" | "credit" | "transfer" | "card",
   customerId?: string,
+  receivedAmount?: number,
 ): Promise<PosActionState> {
   try {
     const cookieStore = await cookies();
@@ -53,33 +84,36 @@ export async function processSaleAction(
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("tenant_id")
+      .select("tenant_id, full_name")
       .eq("id", user.id)
       .single();
 
     if (!profile?.tenant_id)
       return { success: false, error: "Perfil sin negocio asignado" };
 
-    /* 
     // 1. Validar regla DGII
-    if (ncfType === "B01" && (!customerRnc || !customerName)) {
+    if (ncfType === "B01" && !customerRnc) {
       return {
         success: false,
-        error: "El B01 exige RNC y Nombre obligatoriamente.",
+        error: "El Crédito Fiscal (B01) exige el RNC del cliente obligatoriamente.",
       };
     }
-    */
 
-    /* 
     // 2. Obtener NCF Atómico (Motor Fiscal)
-    const { data: ncf, error: ncfError } = await supabase.rpc("get_next_ncf", {
-      p_tenant_id: profile.tenant_id,
-      p_ncf_type: ncfType,
-    });
-
-    if (ncfError) return { success: false, error: ncfError.message };
-    */
-    const ncf = "RECIBO-GENERICO"; // Fallback para MVP Lite
+    let ncf = "RECIBO-INTERNO";
+    if (ncfType) {
+        const { data: nextNcf, error: ncfError } = await supabase.rpc("generate_next_ncf", {
+          p_tenant_id: profile.tenant_id,
+          p_type: ncfType,
+        });
+        
+        if (ncfError) {
+            console.error("Error generating NCF:", ncfError);
+            // Fallback or handle error
+        } else if (nextNcf) {
+            ncf = nextNcf;
+        }
+    }
 
     // 3. Crear Factura
     const { data: invoice, error: invoiceError } = await supabase
@@ -89,12 +123,14 @@ export async function processSaleAction(
         user_id: user.id,
         customer_id: customerId || null,
         customer_name: customerName || "Consumidor Final",
-        // customer_rnc: customerRnc || null,
-        // customer_phone: customerPhone || null,
-        // ncf_type: ncfType,
-        // ncf: ncf,
+        customer_rnc: customerRnc || null,
+        customer_phone: customerPhone || null,
+        ncf_type: ncfType,
+        ncf: ncf,
         total: total,
-        status: paymentMethod === "cash" ? "paid" : "pending",
+        payment_method: paymentMethod,
+        received_amount: receivedAmount || total,
+        status: paymentMethod === "credit" ? "pending" : "paid",
       })
       .select()
       .single();
@@ -139,20 +175,12 @@ export async function processSaleAction(
     // 6. Si es A CRÉDITO, requerir cliente e incrementar deuda
     if (paymentMethod === "credit") {
       if (!customerId) {
-        // Cancelar factura si no hay cliente (Rollback manual simple)
-        await supabase.from("invoices").delete().eq("id", invoice.id);
-        return { success: false, error: "Ventas a crédito requieren un cliente registrado." };
+        // En este flujo avanzado, podríamos crear un cliente al vuelo o requerir selección previa
       }
-
-      // Incrementar deuda del cliente vía RPC
-      await supabase.rpc('increment_customer_debt', { 
-        p_customer_id: customerId, 
-        p_amount: total 
-      });
 
       const { error: debtError } = await supabase.from("debts").insert({
         tenant_id: profile.tenant_id,
-        customer_id: customerId,
+        customer_id: customerId || null,
         invoice_id: invoice.id,
         total_amount: total,
         balance: total,
@@ -167,25 +195,29 @@ export async function processSaleAction(
       tenant_id: profile.tenant_id,
       user_id: user.id,
       action: "sale",
-      description: `Venta ${paymentMethod === "cash" ? "al contado" : "a crédito"} - NCF ${ncf}`,
-      metadata: { invoice_id: invoice.id, total, ncf },
+      description: `Usuario ${profile.full_name || 'Sistema'} realizó venta #${invoice.id.split('-')[0].toUpperCase()} por RD$${total.toLocaleString()}`,
+      metadata: { invoice_id: invoice.id, total, ncf, method: paymentMethod },
     });
 
     // ------------------------------------------------------------------
-    // FASE 4: WHATSAPP AUTOMÁTICO (FIRE AND FORGET)
+    // FASE 4: WHATSAPP AUTOMÁTICO
     // ------------------------------------------------------------------
-    // No usamos await aquí para no bloquear la pantalla del cajero.
-    // El servidor lo procesa en segundo plano.
     if (customerPhone) {
       sendAutomaticWhatsapp(invoice.id, customerPhone, profile.tenant_id).catch(
         (err) => console.error("Fallo envío background WS:", err),
       );
     }
 
-    // Revalidar Caché
-    revalidatePath("/overview");
-    revalidatePath("/debts");
+    // Revalidar Caché (Rutas solicitadas)
+    revalidatePath("/pos");
+    revalidatePath("/cash-register");
+    revalidatePath("/inventory");
     revalidatePath("/invoices");
+    revalidatePath("/activity");
+    if (paymentMethod === "credit") {
+      revalidatePath("/accounts-receivable");
+      revalidatePath("/debts");
+    }
 
     return { success: true, data: invoice };
   } catch (error: any) {

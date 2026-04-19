@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from 'sonner';
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from '@/components/theme-provider';
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -19,12 +20,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className={cn("font-sans", geist.variable)}>
-      <body className="antialiased bg-gray-50 text-gray-900">
-         <TooltipProvider>
+    <html lang="es" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+      <body className="antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
             {children}
-         </TooltipProvider> 
-         <Toaster richColors position="top-right" />
+          </TooltipProvider>
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
       </body>
     </html>
   );
