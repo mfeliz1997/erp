@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase";
 import type { UserProfile } from "@/types/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmployeeForm } from "./components/EmployeeForm";
 import IntegrationsForm from "./components/IntegrationsForm";
@@ -15,10 +16,12 @@ export default async function SettingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  if (!user) redirect("/login");
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("*, tenants(*)")
-    .eq("id", user?.id)
+    .eq("id", user.id)
     .single();
 
   if (profile?.role !== 'admin') {
@@ -104,7 +107,7 @@ export default async function SettingsPage() {
                         <p className="font-semibold  tracking-tight text-sm">{emp.full_name}</p>
                         {emp.role === 'admin' && <span className="bg-primary text-primary-foreground text-xs font-semibold px-1 py-0.5 ">OWNER</span>}
                       </div>
-                      <p className="text-xs font-bold text-blue-600  mt-0.5">{emp.full_name.toLowerCase().replace(/\s+/g, '')}@{tenantDomain}.com</p>
+                      <p className="text-xs font-bold text-blue-600  mt-0.5">{(emp.full_name ?? '').toLowerCase().replace(/\s+/g, '')}@{tenantDomain}.com</p>
                       <p className="text-xs font-semibold text-gray-400 mt-2  tracking-tight">📞 {emp.phone || 'Sin número'}</p>
                       <div className="flex gap-1 mt-3 flex-wrap">
                         {emp.allowed_routes?.map((r: string) => (
