@@ -143,8 +143,8 @@ export default async function CashRegisterPage() {
                 allOpenShifts.map((s) => (
                   <div key={s.id} className="p-4 border border-border bg-card flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-semibold text-foreground">{s.cash_registers.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Cajero: {s.profiles.full_name}</p>
+                      <p className="text-sm font-semibold text-foreground">{s.cash_registers?.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Cajero: {s.profiles?.full_name}</p>
                     </div>
                     <div className="text-right">
                       <Badge variant="outline" className="text-[10px] mb-1 border-border text-muted-foreground">Abierta</Badge>
