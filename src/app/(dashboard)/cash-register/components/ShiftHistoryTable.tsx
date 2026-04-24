@@ -14,8 +14,10 @@ interface Shift {
   payment_breakdown: { cash: number; card: number; transfer: number } | null;
   opened_at: string | null;
   closed_at: string | null;
-  profiles: { full_name: string | null } | null;
-  cash_registers: { name: string } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profiles: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cash_registers: any;
 }
 
 interface ShiftHistoryTableProps {
