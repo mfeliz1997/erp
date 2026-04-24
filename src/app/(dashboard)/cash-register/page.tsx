@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase";
 import { OpenShiftForm } from "./components/OpenShiftForm";
 import { CloseShiftForm } from "./components/CloseShiftForm";
 import { ShiftHistoryTable } from "./components/ShiftHistoryTable";
+import { getOpenShiftSummary } from "@/modules/pos/actions/cash-actions";
 import { redirect } from "next/navigation";
 import { Monitor, Wallet, TrendingUp, History, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +19,7 @@ export default async function CashRegisterPage() {
   // 1. Obtener perfil con ROL
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id, role")
+    .select("tenant_id, role, assigned_register_id")
     .eq("id", user.id)
     .single();
 
@@ -29,25 +30,22 @@ export default async function CashRegisterPage() {
   const isAdmin = profile.role === 'admin';
 
   // 2. Fetch de datos según Rol
-  // Turnos recientes para el historial (Incluimos invoices para calcular monto esperado)
+  // Turnos recientes — leer columnas persistidas, no recalcular en frontend
   const { data: recentShifts } = await supabase
     .from("cash_shifts")
     .select(`
-      *,
+      id, opening_amount, closing_amount, expected_amount,
+      amount_difference, has_discrepancy, payment_breakdown,
+      status, opened_at, closed_at,
       profiles(full_name),
-      cash_registers(name),
-      invoices(total)
+      cash_registers(name)
     `)
     .eq("tenant_id", profile.tenant_id)
     .eq("status", "CLOSED")
     .order("closed_at", { ascending: false })
     .limit(10);
 
-  // Mapeamos para calcular el monto esperado
-  const processedRecentShifts = recentShifts?.map(s => ({
-    ...s,
-    expected_amount: (s.opening_amount || 0) + (s.invoices?.reduce((acc: number, inv: { total?: number }) => acc + (inv.total || 0), 0) || 0)
-  })) || [];
+  const processedRecentShifts = recentShifts ?? [];
 
   // Turno abierto del usuario actual
   const { data: myOpenShift } = await supabase
@@ -168,27 +166,22 @@ export default async function CashRegisterPage() {
 
     // Si tiene caja abierta (sea Admin o POS)
     if (myOpenShift) {
-      const { data: shiftInvoices } = await supabase
-        .from("invoices")
-        .select("total")
-        .eq("shift_id", myOpenShift.id);
+      const summary = await getOpenShiftSummary(myOpenShift.id);
 
-      const totalInvoices = shiftInvoices?.reduce((acc, inv) => acc + (inv.total || 0), 0) || 0;
-      const totalExpected = myOpenShift.opening_amount + totalInvoices;
+      if (!summary) {
+        return <div className="p-10 text-center text-sm text-muted-foreground">Error cargando datos del turno.</div>;
+      }
 
       return (
-        <div className="max-w-md mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="mb-6 flex justify-between items-center">
-             <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-foreground">Mi Turno Activo</h1>
-                <Badge variant="outline" className="text-[10px] mt-1 border-border text-muted-foreground">En sesión</Badge>
-             </div>
-             <p className="text-xs text-muted-foreground text-right">Caja: {myOpenShift.cash_registers?.name}</p>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">Mi Turno Activo</h1>
+              <Badge variant="outline" className="text-[10px] mt-1 border-border text-muted-foreground">En sesión</Badge>
+            </div>
+            <p className="text-xs text-muted-foreground text-right">Caja: {myOpenShift.cash_registers?.name}</p>
           </div>
-          <CloseShiftForm 
-            shift={myOpenShift} 
-            expectedAmount={totalExpected} 
-          />
+          <CloseShiftForm shift={myOpenShift} summary={summary} />
         </div>
       );
     }
@@ -202,13 +195,13 @@ export default async function CashRegisterPage() {
   };
 
   const renderOpenForm = async () => {
-    const { data: registers } = await supabase
+    const { data: allRegisters } = await supabase
       .from("cash_registers")
       .select("*")
       .eq("tenant_id", profile.tenant_id)
       .eq("is_active", true);
 
-    if (!registers || registers.length === 0) {
+    if (!allRegisters || allRegisters.length === 0) {
       return (
         <div className="p-8 border border-border bg-card text-center space-y-3">
            <Monitor className="w-8 h-8 text-muted-foreground mx-auto" />
@@ -218,7 +211,23 @@ export default async function CashRegisterPage() {
       );
     }
 
-    return <OpenShiftForm registers={registers} />;
+    // Si el usuario tiene caja asignada, se la fijamos — no puede elegir otra
+    const assignedId = profile.assigned_register_id;
+    const registers = assignedId
+      ? allRegisters.filter(r => r.id === assignedId)
+      : allRegisters;
+
+    if (assignedId && registers.length === 0) {
+      return (
+        <div className="p-8 border border-border bg-card text-center space-y-3">
+          <Monitor className="w-8 h-8 text-muted-foreground mx-auto" />
+          <h2 className="text-base font-semibold text-foreground">Caja asignada no disponible</h2>
+          <p className="text-sm text-muted-foreground">Contacta a tu administrador.</p>
+        </div>
+      );
+    }
+
+    return <OpenShiftForm registers={registers} fixedRegister={!!assignedId} />;
   };
 
   return (
@@ -246,7 +255,7 @@ export default async function CashRegisterPage() {
           <History className="h-4 w-4 text-muted-foreground" />
           <h2 className="text-sm font-semibold text-foreground uppercase tracking-wide">Cierres Recientes</h2>
         </div>
-        <ShiftHistoryTable shifts={processedRecentShifts} />
+        <ShiftHistoryTable shifts={processedRecentShifts} isAdmin={isAdmin} />
       </section>
 
     </div>

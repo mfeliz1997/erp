@@ -12,9 +12,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface OpenShiftFormProps {
   registers: any[];
+  fixedRegister?: boolean;
 }
 
-export function OpenShiftForm({ registers }: OpenShiftFormProps) {
+export function OpenShiftForm({ registers, fixedRegister = false }: OpenShiftFormProps) {
   const initialState: ActionState = { success: false, error: '' };
   const [state, action, isPending] = useActionState(openShift, initialState);
 
@@ -33,19 +34,36 @@ export function OpenShiftForm({ registers }: OpenShiftFormProps) {
         <CardContent className="pt-6">
           <form action={action} id="open-shift-form" className="space-y-6">
             <div className="space-y-2">
-              <Label className=" font-bold text-xs ">Seleccionar Caja</Label>
-              <Select name="register_id" required>
-                <SelectTrigger className="rounded-xl border-black border-2 h-12">
-                  <SelectValue placeholder="Busque una caja..." />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border border-gray-200">
-                  {registers.map((reg) => (
-                    <SelectItem key={reg.id} value={reg.id} className="rounded-xl">
-                      {reg.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label className="font-bold text-xs flex items-center gap-1.5">
+                Caja
+                {fixedRegister && (
+                  <span className="text-[10px] font-semibold bg-gray-100 border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded">
+                    Asignada
+                  </span>
+                )}
+              </Label>
+              {fixedRegister ? (
+                <>
+                  <input type="hidden" name="register_id" value={registers[0]?.id} />
+                  <div className="h-12 rounded-xl border-2 border-gray-200 bg-gray-50 px-4 flex items-center text-sm font-semibold text-gray-700">
+                    {registers[0]?.name}
+                  </div>
+                  <p className="text-xs text-gray-400">Tu administrador asignó esta caja.</p>
+                </>
+              ) : (
+                <Select name="register_id" required>
+                  <SelectTrigger className="rounded-xl border-black border-2 h-12">
+                    <SelectValue placeholder="Busque una caja..." />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border border-gray-200">
+                    {registers.map((reg) => (
+                      <SelectItem key={reg.id} value={reg.id} className="rounded-xl">
+                        {reg.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
 
             <div className="space-y-2">

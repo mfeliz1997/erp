@@ -43,15 +43,8 @@ export default async function FiscalPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-      <div className="bg-amber-50 p-8 rounded-2xl border border-amber-100 shadow-sm max-w-md">
-        <div className="text-4xl mb-4">⚖️</div>
-        <h2 className="text-xl font-bold text-amber-900">Módulo en Mantenimiento</h2>
-        <p className="text-amber-700/80 mt-2">
-          La gestión fiscal (DGII/NCF) ha sido desactivada temporalmente para esta versión del sistema. 
-          Si necesita habilitar esta función, contacte a soporte.
-        </p>
-      </div>
-      {/* 
+ 
+   
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Comprobantes Fiscales (DGII)</h1>
@@ -132,7 +125,7 @@ export default async function FiscalPage() {
           </div>
         </div>
       </div>
-      */}
+    
     </div>
   );
 }

@@ -7,10 +7,11 @@ export interface CartItem extends Product {
 
 export interface InvoiceItem {
   id: string;
-  invoice_id: string;
+  invoice_id?: string;
   product_name: string;
   quantity: number;
   unit_price: number;
+  total?: number;
 }
 
 export interface Invoice {
@@ -20,13 +21,16 @@ export interface Invoice {
   customer_name: string | null;
   customer_rnc?: string | null;
   customer_phone?: string | null;
-  ncf?: string;
-  ncf_type?: string;
+  ncf?: string | null;
+  ncf_type?: string | null;
+  payment_method?: string | null;
+  amount_received?: number | null;
+  change_amount?: number | null;
   total: number;
   status: "paid" | "pending" | "cancelled";
   created_at: string;
   // Relaciones
-  profiles?: { full_name: string | null };
+  profiles?: { full_name: string | null } | null;
   invoice_items?: InvoiceItem[];
 }
 

@@ -90,33 +90,34 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-                      <button 
+                    <div className="flex justify-end items-center gap-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-3 transition-all duration-200">
+                      <button
                         onClick={() => handleOpenDetail(inv)}
-                        className="p-2 border border-transparent hover:border-black transition-colors"
+                        className="p-1.5 rounded-lg border border-transparent hover:border-gray-200 hover:bg-gray-50 transition-colors"
                         title="Ver Detalle"
                       >
-                        <Eye className="w-5 h-5 text-gray-400 hover:text-black" />
+                        <Eye className="w-4 h-4 text-gray-400 hover:text-black" />
                       </button>
-                      
-                      {/* FIX APLICADO AQUÍ (Desktop) 👇 */}
-                      <PrintTicketButton 
-                        invoiceData={{
-                          total: inv.total,
-                          items: inv.invoice_items?.map((i: any) => ({ 
-                            name: i.product_name, 
-                            price: i.unit_price,
-                            quantity: i.quantity 
-                          })) || []
-                        }} 
-                      />
-                      
-                      <WhatsappShareButton 
-                        invoiceId={inv.id}
-                        phone={""}
-                        customerName={inv.customer_name ?? undefined}
-                        total={inv.total}
-                      />
+                      <div className="[&>button]:h-7 [&>button]:px-2 [&>button]:text-[11px] [&>button]:rounded-lg [&>button]:font-semibold">
+                        <PrintTicketButton
+                          invoiceData={{
+                            total: inv.total,
+                            items: inv.invoice_items?.map((i: any) => ({
+                              name: i.product_name,
+                              price: i.unit_price,
+                              quantity: i.quantity,
+                            })) || [],
+                          }}
+                        />
+                      </div>
+                      <div className="[&>button]:h-7 [&>button]:px-2 [&>button]:text-[11px] [&>button]:rounded-lg [&>button]:font-semibold">
+                        <WhatsappShareButton
+                          invoiceId={inv.id}
+                          phone={""}
+                          customerName={inv.customer_name ?? undefined}
+                          total={inv.total}
+                        />
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -163,32 +164,36 @@ export function InvoicesTable({ invoices }: InvoicesTableProps) {
                  </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4">
+              <div className="flex flex-col gap-3 pt-4">
                  <div>
                     <p className="text-xs font-semibold  text-gray-400 mb-1 leading-none">Total Venta</p>
-                    <p className="text-2xl font-semibold ">RD$ {inv.total.toLocaleString()}</p>
+                    <p className="text-xl font-semibold ">RD$ {inv.total.toLocaleString()}</p>
                  </div>
-                 
-                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    
-                    {/* FIX APLICADO AQUÍ (Móvil) 👇 */}
-                    <PrintTicketButton 
-                      invoiceData={{
-                        total: inv.total,
-                        items: inv.invoice_items?.map((i: any) => ({ 
-                          name: i.product_name, 
-                          price: i.unit_price,
-                          quantity: i.quantity 
-                        })) || []
-                      }} 
-                    />
 
-                    <WhatsappShareButton 
-                      invoiceId={inv.id}
-                      phone={""}
-                      customerName={inv.customer_name ?? undefined}
-                      total={inv.total}
-                    />
+                 <div className="grid grid-cols-2 gap-2 w-full" onClick={(e) => e.stopPropagation()}>
+
+                    {/* FIX APLICADO AQUÍ (Móvil) 👇 */}
+                    <div className="[&>button]:w-full [&>button]:h-10 [&>button]:text-xs [&>button]:px-2">
+                      <PrintTicketButton
+                        invoiceData={{
+                          total: inv.total,
+                          items: inv.invoice_items?.map((i: any) => ({
+                            name: i.product_name,
+                            price: i.unit_price,
+                            quantity: i.quantity
+                          })) || []
+                        }}
+                      />
+                    </div>
+
+                    <div className="[&>button]:w-full [&>button]:h-10 [&>button]:text-xs [&>button]:px-2">
+                      <WhatsappShareButton
+                        invoiceId={inv.id}
+                        phone={""}
+                        customerName={inv.customer_name ?? undefined}
+                        total={inv.total}
+                      />
+                    </div>
                  </div>
               </div>
             </div>

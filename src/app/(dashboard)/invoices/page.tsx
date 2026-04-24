@@ -16,18 +16,27 @@ export default async function InvoicesPage() {
     .single();
 
   // 2. Obtener facturas filtradas por tenant
+  // El alias profiles:user_id usa la FK hacia public.profiles (no auth.users)
   const { data: invoices } = await supabase
     .from("invoices")
     .select(`
-      *,
-      profiles(full_name),
-      invoice_items(*)
+      id, tenant_id, user_id, customer_name, customer_rnc, total, status,
+      created_at, ncf, ncf_type, payment_method, amount_received, change_amount,
+      profiles:user_id(full_name),
+      invoice_items(id, product_name, quantity, unit_price, total)
     `)
     .eq("tenant_id", profile?.tenant_id)
     .order("created_at", { ascending: false });
 
+  // Supabase devuelve profiles como array cuando hay múltiples FKs; normalizamos a objeto
+  type RawInvoice = NonNullable<typeof invoices>[number];
+  const normalizedInvoices = (invoices ?? []).map((inv: RawInvoice) => ({
+    ...inv,
+    profiles: Array.isArray(inv.profiles) ? (inv.profiles[0] ?? null) : inv.profiles,
+  }));
+
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-6 pt-16 lg:pt-6 max-w-7xl mx-auto space-y-8">
       {/* Header Estético */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -42,7 +51,7 @@ export default async function InvoicesPage() {
       </div>
 
       {/* Tabla Interactiva (Client Component) */}
-      <InvoicesTable invoices={invoices || []} />
+      <InvoicesTable invoices={normalizedInvoices} />
     </div>
   );
 }
