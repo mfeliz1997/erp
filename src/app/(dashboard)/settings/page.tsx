@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase";
+import type { UserProfile } from "@/types/auth";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmployeeForm } from "./components/EmployeeForm";
@@ -8,7 +9,7 @@ import WebsiteSettingsForm from "./website/page";
 import { RegisterManager } from "@/modules/settings/components/RegisterManager";
 import { PrinterSettingsForm } from "./components/PrinterSettingsForm";
 import { AdminPinForm } from "@/modules/settings/components/AdminPinForm";
-import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck, Lock } from "lucide-react";
+import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck, Lock, CreditCard, Landmark, Clock, ShoppingBag } from "lucide-react";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -89,7 +90,7 @@ export default async function SettingsPage() {
 
         <TabsContent value="team" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <EmployeeForm tenantDomain={tenantDomain} />
+            <EmployeeForm tenantDomain={tenantDomain} registers={registers || []} />
 
             <div className="space-y-6">
               <h3 className="text-lg font-semibold    flex items-center gap-2">
@@ -107,11 +108,43 @@ export default async function SettingsPage() {
                       <p className="text-xs font-semibold text-gray-400 mt-2  tracking-tight">📞 {emp.phone || 'Sin número'}</p>
                       <div className="flex gap-1 mt-3 flex-wrap">
                         {emp.allowed_routes?.map((r: string) => (
-                          <span key={r} className="text-xs font-semibold   border border-gray-100 bg-gray-50 px-2 py-0.5">{r.replace('/', '')}</span>
+                          <span key={r} className="text-xs font-semibold border border-gray-100 bg-gray-50 px-2 py-0.5">{r.replace('/', '')}</span>
                         ))}
                       </div>
+                      <div className="flex gap-1.5 mt-2 flex-wrap">
+                        {emp.can_give_credit && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-700">
+                            <Clock className="w-2.5 h-2.5" /> Crédito
+                          </span>
+                        )}
+                        {emp.can_use_card && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-blue-50 border border-blue-200 text-blue-700">
+                            <CreditCard className="w-2.5 h-2.5" /> Tarjeta
+                          </span>
+                        )}
+                        {emp.can_use_transfer && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700">
+                            <Landmark className="w-2.5 h-2.5" /> Transferencia
+                          </span>
+                        )}
+                        {emp.can_sell_without_shift && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-purple-50 border border-purple-200 text-purple-700">
+                            <ShoppingBag className="w-2.5 h-2.5" /> Sin turno
+                          </span>
+                        )}
+                        {emp.can_edit_customers && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-indigo-50 border border-indigo-200 text-indigo-700">
+                            <Users className="w-2.5 h-2.5" /> Edit. Clientes
+                          </span>
+                        )}
+                        {emp.assigned_register_id && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-gray-100 border border-gray-200 text-gray-600">
+                            <Monitor className="w-2.5 h-2.5" /> {registers?.find((r: any) => r.id === emp.assigned_register_id)?.name ?? 'Caja asignada'}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <EditEmployeeModal employee={emp}>
+                    <EditEmployeeModal employee={emp} registers={registers || []}>
                       <button disabled={emp.role === 'admin' && emp.id === user?.id} className="p-3 border-2 border-transparent group-hover:border-black text-black transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-black">
                         <Settings className="w-5 h-5" />
                       </button>

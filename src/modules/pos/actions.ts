@@ -45,17 +45,33 @@ export async function validateAdminPin(pin: string): Promise<PosActionState> {
   }
 }
 
+export interface ProcessSaleInput {
+  cart: CartItem[];
+  total: number;
+  customerName: string;
+  customerRnc: string;
+  customerPhone: string;
+  ncfType: "B01" | "B02";
+  paymentMethod: "cash" | "credit" | "transfer" | "card";
+  customerId?: string;
+  receivedAmount?: number;
+  creditDays?: number;
+  authPin?: string;
+  userRole?: string;
+}
+
+const REQUIRES_PIN_ROLES = ["pos"];
+const REQUIRES_PIN_METHODS = ["credit", "transfer", "card"];
+
 export async function processSaleAction(
-  cart: CartItem[],
-  total: number,
-  customerName: string,
-  customerRnc: string,
-  customerPhone: string,
-  ncfType: "B01" | "B02",
-  paymentMethod: "cash" | "credit" | "transfer" | "card",
-  customerId?: string,
-  receivedAmount?: number,
+  input: ProcessSaleInput,
 ): Promise<PosActionState> {
+  const {
+    cart, total, customerName, customerRnc, customerPhone,
+    ncfType, paymentMethod, receivedAmount,
+    authPin, userRole,
+  } = input;
+
   try {
     const cookieStore = await cookies();
     const supabase = createServerClient(
@@ -77,21 +93,41 @@ export async function processSaleAction(
       },
     );
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Usuario no autenticado" };
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("tenant_id, full_name")
+      .select("tenant_id, full_name, role")
       .eq("id", user.id)
       .single();
 
     if (!profile?.tenant_id)
       return { success: false, error: "Perfil sin negocio asignado" };
 
-    // 1. Validar regla DGII
+    // 1. Validar PIN para cajeros en métodos no-efectivo
+    const effectiveRole = userRole || profile.role;
+    if (
+      REQUIRES_PIN_ROLES.includes(effectiveRole) &&
+      REQUIRES_PIN_METHODS.includes(paymentMethod)
+    ) {
+      if (!authPin) {
+        return { success: false, error: "Se requiere PIN de autorización." };
+      }
+      const { data: authorizer } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("tenant_id", profile.tenant_id)
+        .eq("pin_code", authPin)
+        .in("role", ["manager", "admin"])
+        .maybeSingle();
+
+      if (!authorizer) {
+        return { success: false, error: "PIN incorrecto o sin permisos de autorización." };
+      }
+    }
+
+    // 2. Validar regla DGII
     if (ncfType === "B01" && !customerRnc) {
       return {
         success: false,
@@ -99,37 +135,70 @@ export async function processSaleAction(
       };
     }
 
-    // 2. Obtener NCF Atómico (Motor Fiscal)
-    let ncf = "RECIBO-INTERNO";
-    if (ncfType) {
-        const { data: nextNcf, error: ncfError } = await supabase.rpc("generate_next_ncf", {
-          p_tenant_id: profile.tenant_id,
-          p_type: ncfType,
-        });
-        
-        if (ncfError) {
-            console.error("Error generating NCF:", ncfError);
-            // Fallback or handle error
-        } else if (nextNcf) {
-            ncf = nextNcf;
-        }
+    // 3. Upsert del cliente por teléfono
+    let resolvedCustomerId = input.customerId;
+    if (customerPhone) {
+      const { data: existing } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("tenant_id", profile.tenant_id)
+        .eq("phone", customerPhone)
+        .maybeSingle();
+
+      if (existing) {
+        await supabase
+          .from("customers")
+          .update({
+            ...(customerName && { name: customerName }),
+            ...(customerRnc  && { tax_id: customerRnc }),
+          })
+          .eq("id", existing.id);
+        resolvedCustomerId = existing.id;
+      } else if (customerName) {
+        const { data: created } = await supabase
+          .from("customers")
+          .insert({
+            tenant_id: profile.tenant_id,
+            name: customerName.trim(),
+            phone: customerPhone,
+            tax_id: customerRnc || null,
+          })
+          .select("id")
+          .single();
+        if (created) resolvedCustomerId = created.id;
+      }
     }
 
-    // 3. Crear Factura
+    // 4. Obtener NCF Atómico (Motor Fiscal)
+    let ncf = "RECIBO-INTERNO";
+    if (ncfType) {
+      const { data: nextNcf, error: ncfError } = await supabase.rpc("generate_next_ncf", {
+        p_tenant_id: profile.tenant_id,
+        p_type: ncfType,
+      });
+
+      if (ncfError) {
+        console.error("Error generating NCF:", ncfError);
+      } else if (nextNcf) {
+        ncf = nextNcf;
+      }
+    }
+
+    // 5. Crear Factura
     const { data: invoice, error: invoiceError } = await supabase
       .from("invoices")
       .insert({
         tenant_id: profile.tenant_id,
         user_id: user.id,
-        customer_id: customerId || null,
+        customer_id: resolvedCustomerId || null,
         customer_name: customerName || "Consumidor Final",
         customer_rnc: customerRnc || null,
-        customer_phone: customerPhone || null,
+        rnc_customer: customerRnc || null,
         ncf_type: ncfType,
         ncf: ncf,
         total: total,
         payment_method: paymentMethod,
-        received_amount: receivedAmount || total,
+        amount_received: receivedAmount || total,
         status: paymentMethod === "credit" ? "pending" : "paid",
       })
       .select()
@@ -141,7 +210,7 @@ export async function processSaleAction(
         error: `Error factura: ${invoiceError.message}`,
       };
 
-    // 4. Descontar Inventario Seguro
+    // 6. Descontar Inventario Seguro
     for (const item of cart) {
       const { data: success, error: stockError } = await supabase.rpc(
         "decrement_stock_safe",
@@ -160,7 +229,7 @@ export async function processSaleAction(
       }
     }
 
-    // 5. Generar Detalle de Factura
+    // 7. Generar Detalle de Factura
     const invoiceItems = cart.map((item) => ({
       tenant_id: profile.tenant_id,
       invoice_id: invoice.id,
@@ -172,25 +241,27 @@ export async function processSaleAction(
     }));
     await supabase.from("invoice_items").insert(invoiceItems);
 
-    // 6. Si es A CRÉDITO, requerir cliente e incrementar deuda
+    // 8. Si es A CRÉDITO, registrar deuda y actualizar current_debt del cliente
     if (paymentMethod === "credit") {
-      if (!customerId) {
-        // En este flujo avanzado, podríamos crear un cliente al vuelo o requerir selección previa
-      }
-
       const { error: debtError } = await supabase.from("debts").insert({
         tenant_id: profile.tenant_id,
-        customer_id: customerId || null,
         invoice_id: invoice.id,
         total_amount: total,
         balance: total,
         status: "open",
       });
 
-      if (debtError) console.error("Error creando deuda:", debtError.message);
+      if (debtError) {
+        console.error("Error creando deuda:", debtError.message);
+      } else if (resolvedCustomerId) {
+        await supabase.rpc("increment_customer_debt", {
+          p_customer_id: resolvedCustomerId,
+          p_amount: total,
+        });
+      }
     }
 
-    // 7. Auditoría Final (Log de Actividad)
+    // 9. Auditoría Final (Log de Actividad)
     await supabase.from("activity_logs").insert({
       tenant_id: profile.tenant_id,
       user_id: user.id,
@@ -251,9 +322,10 @@ export async function logManualWhatsappShare(
 
     await supabase.from("notifications_log").insert({
       tenant_id: profile.tenant_id,
-      invoice_id: invoiceId,
-      type: "whatsapp_manual",
-      status: "sent_manual",
+      phone_number: "manual",
+      notification_type: "INVOICE_WHATSAPP",
+      status: "SENT",
+      meta_message_id: invoiceId,
     });
 
     return { success: true, data: "Log registrado exitosamente" };
@@ -334,11 +406,11 @@ async function sendAutomaticWhatsapp(
     // 4. Log de Auditoría de la API
     await supabase.from("notifications_log").insert({
       tenant_id: tenantId,
-      invoice_id: invoiceId,
-      type: "whatsapp_api",
-      status: response.ok
-        ? "success"
-        : `failed: ${result.error?.message || "Error desconocido"}`,
+      phone_number: customerPhone,
+      notification_type: "INVOICE_WHATSAPP",
+      status: response.ok ? "DELIVERED" : "FAILED",
+      meta_message_id: result?.messages?.[0]?.id || null,
+      error_details: response.ok ? null : (result?.error?.message || "Error desconocido"),
     });
   } catch (error) {
     console.error("Excepción en sendAutomaticWhatsapp:", error);
@@ -349,9 +421,7 @@ export async function searchCustomerByPhone(phone: string) {
   if (!phone || phone.length < 10) return null;
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
   const { data: profile } = await supabase
@@ -361,13 +431,51 @@ export async function searchCustomerByPhone(phone: string) {
     .single();
   if (!profile?.tenant_id) return null;
 
-  // Busca al cliente estrictamente en SU tienda
   const { data: customer } = await supabase
     .from("customers")
-    .select("id, name, city")
+    .select("id, name, city, phone")
     .eq("tenant_id", profile.tenant_id)
     .eq("phone", phone)
     .single();
 
   return customer;
+}
+
+export async function createCustomerAction(params: {
+  name: string;
+  phone: string;
+  city?: string;
+}): Promise<PosActionState> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "No autorizado" };
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .single();
+    if (!profile?.tenant_id) return { success: false, error: "Tenant no encontrado" };
+
+    const { data: customer, error } = await supabase
+      .from("customers")
+      .insert({
+        tenant_id: profile.tenant_id,
+        name: params.name.trim(),
+        phone: params.phone,
+        city: params.city?.trim() || null,
+      })
+      .select("id, name, city, phone")
+      .single();
+
+    if (error) {
+      if (error.code === "23505") return { success: false, error: "Ya existe un cliente con ese teléfono" };
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: customer };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 }

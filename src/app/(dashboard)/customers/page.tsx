@@ -15,7 +15,7 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id")
+    .select("tenant_id, role, can_edit_customers")
     .eq("id", user.id)
     .single();
 
@@ -33,6 +33,8 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
   }
 
   const { data: customers } = await fetchQuery;
+
+  const canEdit = profile?.role === "admin" || profile?.can_edit_customers === true;
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-12 pb-20">
@@ -64,7 +66,7 @@ export default async function CustomersPage(props: { searchParams: Promise<{ q?:
       </div>
 
       <div className="border border-gray-200 bg-white shadow-sm rounded-xl overflow-hidden">
-        <CustomerTable customers={customers || []} />
+        <CustomerTable customers={customers || []} canEdit={canEdit} />
       </div>
     </div>
   );
