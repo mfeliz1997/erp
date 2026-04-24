@@ -57,7 +57,8 @@ export default async function CashRegisterPage() {
     .single();
 
   // Si es ADMIN, buscamos todas las cajas abiertas y estadísticas globales
-  let allOpenShifts: typeof processedRecentShifts = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let allOpenShifts: any[] = [];
   let stats = { totalOpening: 0, totalSales: 0 };
 
   if (isAdmin) {
