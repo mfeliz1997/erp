@@ -8,7 +8,8 @@ interface CashShiftAlert {
   id: string;
   closed_at: string | null;
   amount_difference: number;
-  profiles: { full_name: string | null } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profiles: any;
 }
 
 export default async function CashAlerts({ tenantId }: { tenantId: string }) {

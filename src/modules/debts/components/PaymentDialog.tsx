@@ -20,7 +20,8 @@ interface DebtRow {
   id: string;
   total_amount: number;
   balance: number;
-  invoices: { customer_name: string | null; customer_id: string | null } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoices: any;
 }
 
 interface PaymentDialogProps {

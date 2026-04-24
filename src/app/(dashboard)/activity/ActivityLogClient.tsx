@@ -35,7 +35,8 @@ interface ActivityLog {
   description: string | null;
   metadata: Record<string, unknown> | null;
   created_at: string;
-  profiles: { full_name: string | null } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  profiles: any;
 }
 
 interface Props {

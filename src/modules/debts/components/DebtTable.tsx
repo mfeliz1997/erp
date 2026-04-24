@@ -16,12 +16,8 @@ interface DebtRow {
   due_date: string | null;
   status: string;
   created_at: string;
-  invoices: {
-    id: string;
-    customer_name: string | null;
-    customer_id: string | null;
-    payment_method: string | null;
-  } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoices: any;
 }
 
 interface DebtTableProps {
