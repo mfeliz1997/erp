@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { TrendingDown, TrendingUp, CheckCircle2, AlertTriangle } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 interface Shift {
   id: string;
@@ -28,93 +28,88 @@ interface ShiftHistoryTableProps {
 export function ShiftHistoryTable({ shifts, isAdmin = false }: ShiftHistoryTableProps) {
   if (!shifts || shifts.length === 0) {
     return (
-      <div className="text-center py-10 border-2 border-solid border-gray-200 rounded-xl bg-gray-50/50">
-        <p className="text-xs font-bold text-gray-400">No hay historial de turnos cerrados</p>
+      <div className="py-10 text-center border border-dashed border-border rounded-xl bg-muted/30">
+        <p className="text-xs text-muted-foreground">No hay historial de turnos cerrados</p>
       </div>
     );
   }
 
   return (
-    <div className="border border-gray-200 bg-white rounded-xl overflow-hidden">
+    <div className="border border-border bg-background rounded-xl overflow-hidden shadow-sm">
       <Table>
-        <TableHeader className="bg-gray-100 border-b border-gray-200">
-          <TableRow className="hover:bg-transparent">
-            <TableHead className="text-black font-semibold text-xs">Apertura / Cierre</TableHead>
-            <TableHead className="text-black font-semibold text-xs">Cajero</TableHead>
-            <TableHead className="text-black font-semibold text-xs">Caja</TableHead>
-            <TableHead className="text-black font-semibold text-xs text-right">Cierre Real</TableHead>
-            <TableHead className="text-black font-semibold text-xs text-right">Diferencia</TableHead>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent border-b border-border bg-muted/40">
+            <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Apertura / Cierre</TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Cajero</TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Caja</TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Cierre Real</TableHead>
+            <TableHead className="text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">Diferencia</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {shifts.map((shift) => {
             const diff = shift.amount_difference ?? 0;
             const hasDiscrepancy = shift.has_discrepancy ?? false;
-            // Surplus: diff > 1 (more cash than expected) — only admin sees label
             const isSurplus = diff > 1;
-            const isShortage = hasDiscrepancy; // diff < -1
+            const isShortage = hasDiscrepancy;
             const isPerfect = !isShortage && !isSurplus;
 
             return (
               <TableRow
                 key={shift.id}
-                className={`border-b border-gray-100 transition-colors ${
-                  isShortage ? "bg-red-50/40 hover:bg-red-50" : "hover:bg-gray-50/50"
-                }`}
+                className="border-b border-border last:border-0 transition-colors hover:bg-muted/30"
               >
                 <TableCell className="py-4">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-gray-900">
-                      {shift.opened_at ? format(new Date(shift.opened_at), "d MMM, HH:mm", { locale: es }) : '-'}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-semibold text-foreground">
+                      {shift.opened_at ? format(new Date(shift.opened_at), "d MMM, HH:mm", { locale: es }) : '—'}
                     </span>
-                    <span className="text-xs text-gray-400 font-medium">
+                    <span className="text-xs text-muted-foreground">
                       {shift.closed_at ? format(new Date(shift.closed_at), "d MMM, HH:mm", { locale: es }) : 'En curso'}
                     </span>
                   </div>
                 </TableCell>
 
                 <TableCell>
-                  <span className="text-xs font-bold tracking-tight">{shift.profiles?.full_name || 'N/A'}</span>
+                  <span className="text-xs font-medium text-foreground">{shift.profiles?.full_name || 'N/A'}</span>
                 </TableCell>
 
                 <TableCell>
-                  <Badge variant="outline" className="rounded-xl border-black text-xs font-bold">
+                  <Badge variant="outline" className="text-xs font-medium">
                     {shift.cash_registers?.name ?? '—'}
                   </Badge>
                 </TableCell>
 
                 <TableCell className="text-right">
-                  <span className="text-xs font-semibold tabular-nums">
+                  <span className="text-xs font-semibold tabular-nums text-foreground">
                     RD$ {(shift.closing_amount ?? 0).toLocaleString()}
                   </span>
                 </TableCell>
 
                 <TableCell className="text-right">
                   {isPerfect && (
-                    <span className="text-xs text-green-600 font-bold flex items-center justify-end gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Cuadrado
-                    </span>
+                    <Badge variant="outline" className="text-xs font-medium text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:border-green-800 dark:text-green-400">
+                      Cuadrado
+                    </Badge>
                   )}
 
                   {isShortage && (
-                    <span className="text-xs text-red-600 font-bold flex items-center justify-end gap-1">
-                      <AlertTriangle className="w-3 h-3" />
+                    <Badge variant="destructive" className="text-xs font-medium tabular-nums">
                       −RD$ {Math.abs(diff).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
-                    </span>
+                    </Badge>
                   )}
 
-                  {/* Surplus: visible only for admins */}
                   {isSurplus && isAdmin && (
-                    <span className="text-xs text-blue-600 font-bold flex items-center justify-end gap-1">
+                    <Badge variant="outline" className="text-xs font-medium tabular-nums text-blue-700 border-blue-200 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-400 gap-1">
                       <TrendingUp className="w-3 h-3" />
                       +RD$ {diff.toLocaleString('es-DO', { minimumFractionDigits: 2 })}
-                    </span>
+                    </Badge>
                   )}
 
                   {isSurplus && !isAdmin && (
-                    <span className="text-xs text-green-600 font-bold flex items-center justify-end gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Cuadrado
-                    </span>
+                    <Badge variant="outline" className="text-xs font-medium text-green-700 border-green-200 bg-green-50 dark:bg-green-950/30 dark:border-green-800 dark:text-green-400">
+                      Cuadrado
+                    </Badge>
                   )}
                 </TableCell>
               </TableRow>
