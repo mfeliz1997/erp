@@ -15,7 +15,7 @@ export default async function EditProductPage({
   // Fetch Server-First veloz (Añadimos image_url)
   const { data: product } = await supabase
     .from("products")
-    .select("id, name, price, stock, min_stock_alert, image_url, metadata")
+    .select("id, name, price, wholesale_price_1, wholesale_price_2, stock, min_stock_alert, image_url, metadata")
     .eq("id", id)
     .single();
 

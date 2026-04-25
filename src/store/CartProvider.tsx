@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
-import { CartItem } from '@/types/pos';
+import { CartItem, resolvePriceForLevel } from '@/types/pos';
 import { Product } from '@/types/inventory';
 import { processSaleAction } from '@/modules/pos/actions';
 import { toast } from 'sonner';
@@ -15,7 +15,7 @@ export interface PendingSale {
   customerName: string;
   customerRnc: string;
   customerPhone: string;
-  ncfType: 'B01' | 'B02';
+  ncfType: 'B01' | 'none';
   paymentMethod: 'cash' | 'credit' | 'transfer' | 'card';
   customerId?: string;
   receivedAmount?: number;
@@ -28,11 +28,15 @@ interface CartContextType {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  /** Reprices every cart item to match the given level (1=Detal, 2=Mayorista, 3=VIP). No fetch needed. */
+  updateCartPrices: (level: 1 | 2 | 3) => void;
   total: number;
   cartTotal: number;
   isOnline: boolean;
   pendingSalesCount: number;
   enqueueSale: (sale: Omit<PendingSale, 'id' | 'savedAt'>) => void;
+  /** Active price level so addToCart can inherit it for new items */
+  activePriceLevel: 1 | 2 | 3;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -44,10 +48,11 @@ const SYNC_INTERVAL_MS = 15_000;
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart]               = useState<CartItem[]>([]);
-  const [isMounted, setIsMounted]     = useState(false);
-  const [isOnline, setIsOnline]       = useState(true);
-  const [pendingSales, setPendingSales] = useState<PendingSale[]>([]);
+  const [cart, setCart]                     = useState<CartItem[]>([]);
+  const [isMounted, setIsMounted]           = useState(false);
+  const [isOnline, setIsOnline]             = useState(true);
+  const [pendingSales, setPendingSales]     = useState<PendingSale[]>([]);
+  const [activePriceLevel, setActivePriceLevel] = useState<1 | 2 | 3>(1);
   const isSyncing = useRef(false);
 
   // ── Init ────────────────────────────────────────────────────────────────────
@@ -58,7 +63,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const savedCart = localStorage.getItem(CART_KEY);
     if (savedCart) {
-      try { setCart(JSON.parse(savedCart)); } catch {}
+      try {
+        const parsed: CartItem[] = JSON.parse(savedCart);
+        // Backfill unit_price for carts saved before multi-tier pricing
+        setCart(parsed.map((item) => ({ ...item, unit_price: item.unit_price ?? item.price })));
+      } catch {}
     }
 
     const savedPending = localStorage.getItem(PENDING_KEY);
@@ -164,7 +173,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // ── Cart operations ──────────────────────────────────────────────────────────
 
+  const updateCartPrices = useCallback((level: 1 | 2 | 3) => {
+    setActivePriceLevel(level);
+    setCart((prev) =>
+      prev.map((item) => ({
+        ...item,
+        unit_price: resolvePriceForLevel(item, level),
+      }))
+    );
+  }, []);
+
   const addToCart = (product: Product) => {
+    const unit_price = resolvePriceForLevel(product, activePriceLevel);
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -172,7 +192,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           item.id === product.id ? { ...item, cartQuantity: item.cartQuantity + 1 } : item
         );
       }
-      return [...prev, { ...product, cartQuantity: 1 }];
+      return [...prev, { ...product, unit_price, cartQuantity: 1 }];
     });
   };
 
@@ -188,7 +208,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => setCart([]);
 
-  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.cartQuantity, 0);
+  const cartTotal = cart.reduce((acc, item) => acc + item.unit_price * item.cartQuantity, 0);
   const total     = cartTotal;
 
   if (!isMounted) return null;
@@ -196,6 +216,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{
       cart, addToCart, removeFromCart, updateQuantity, clearCart,
+      updateCartPrices, activePriceLevel,
       total, cartTotal,
       isOnline,
       pendingSalesCount: pendingSales.length,

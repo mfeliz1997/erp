@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
- 
-// Si usas shadcn, importa el Button. Si no, usa una etiqueta <button> normal.
-import { Button } from "@/components/ui/button"; 
 import { logManualWhatsappShare } from "@/modules/pos/actions";
 
 interface Props {
@@ -39,14 +36,13 @@ export function WhatsappShareButton({ invoiceId, phone, customerName, total }: P
   };
 
   return (
-    <Button 
-      variant="outline" 
+    <button
       onClick={handleShare}
       disabled={isSending}
-      className="gap-2 border-green-600 text-green-700 hover:bg-green-50"
+      className="ap-btn-secondary w-full h-10 text-sm disabled:opacity-50"
     >
       <MessageCircle className="h-4 w-4" />
       {isSending ? "Abriendo..." : "WhatsApp"}
-    </Button>
+    </button>
   );
 }

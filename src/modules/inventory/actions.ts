@@ -50,6 +50,8 @@ export async function createProductAction(
   const type = formData.get("type") as ProductType;
   const price = cleanCurrency(formData.get("price"));
   const cost_price = cleanCurrency(formData.get("cost_price"));
+  const wholesale_price_1 = cleanCurrency(formData.get("wholesale_price_1"));
+  const wholesale_price_2 = cleanCurrency(formData.get("wholesale_price_2"));
   const stock = parseInt(formData.get("stock") as string) || 0;
   const min_stock_alert =
     parseInt(formData.get("min_stock_alert") as string) || 10;
@@ -94,6 +96,8 @@ export async function createProductAction(
     type,
     price,
     cost_price,
+    wholesale_price_1: wholesale_price_1 || null,
+    wholesale_price_2: wholesale_price_2 || null,
     stock,
     min_stock_alert,
     metadata,
@@ -212,7 +216,9 @@ export async function updateProductAction(
 
   // Extraer datos básicos (con limpieza de moneda)
   const name = formData.get("name") as string;
-  const price = cleanCurrency(formData.get("price")); 
+  const price = cleanCurrency(formData.get("price"));
+  const wholesale_price_1 = cleanCurrency(formData.get("wholesale_price_1"));
+  const wholesale_price_2 = cleanCurrency(formData.get("wholesale_price_2"));
   const stock = parseInt(formData.get("stock") as string) || 0;
   const min_stock_alert =
     parseInt(formData.get("min_stock_alert") as string) || 10;
@@ -234,6 +240,8 @@ export async function updateProductAction(
   const updatePayload: Record<string, any> = {
     name,
     price,
+    wholesale_price_1: wholesale_price_1 || null,
+    wholesale_price_2: wholesale_price_2 || null,
     stock,
     min_stock_alert,
     metadata: newMetadata,

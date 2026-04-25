@@ -10,7 +10,7 @@ import WebsiteSettingsForm from "./components/WebsiteSettingsForm";
 import { RegisterManager } from "@/modules/settings/components/RegisterManager";
 import { PrinterSettingsForm } from "./components/PrinterSettingsForm";
 import { AdminPinForm } from "@/modules/settings/components/AdminPinForm";
-import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck, Lock, CreditCard, Landmark, Clock, ShoppingBag } from "lucide-react";
+import { Settings, Users, Monitor, Globe, MessageSquare, Printer as PrinterIcon, ShieldCheck, Lock, CreditCard, Landmark, Clock, ShoppingBag, Tag } from "lucide-react";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -78,7 +78,7 @@ export default async function SettingsPage() {
             { v: 'website', l: 'Catálogo', i: <Globe className="w-3 h-3" /> },
             { v: 'integrations', l: 'Canales', i: <MessageSquare className="w-3 h-3" /> },
             { v: 'printing', l: 'Impresión', i: <PrinterIcon className="w-3 h-3" /> },
-            { v: 'fiscal', l: 'Fiscal', i: <ShieldCheck className="w-3 h-3" /> },
+         
             { v: 'security', l: 'Seguridad', i: <Lock className="w-3 h-3" /> },
           ].map(tab => (
             <TabsTrigger
@@ -140,6 +140,11 @@ export default async function SettingsPage() {
                             <Users className="w-2.5 h-2.5" /> Edit. Clientes
                           </span>
                         )}
+                        {emp.can_apply_discount && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-700">
+                            <Tag className="w-2.5 h-2.5" /> Descuentos
+                          </span>
+                        )}
                         {emp.assigned_register_id && (
                           <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 bg-gray-100 border border-gray-200 text-gray-600">
                             <Monitor className="w-2.5 h-2.5" /> {registers?.find((r: any) => r.id === emp.assigned_register_id)?.name ?? 'Caja asignada'}
@@ -174,16 +179,7 @@ export default async function SettingsPage() {
         <TabsContent value="printing" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <PrinterSettingsForm />
         </TabsContent>
-
-        <TabsContent value="fiscal" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="p-20 bg-white border-4 border-solid border-gray-100 text-center flex flex-col items-center justify-center space-y-6">
-            <ShieldCheck className="w-16 h-16 text-gray-100" />
-            <div className="space-y-1">
-              <p className="text-xl font-semibold   text-gray-300">Modulo de Cumplimiento Fiscal</p>
-              <p className="text-xs font-bold text-gray-300  ">Funcionalidad en fase de auditoría interna</p>
-            </div>
-          </div>
-        </TabsContent>
+ 
 
         <TabsContent value="security" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="max-w-md mx-auto py-12">

@@ -8,17 +8,7 @@ import { Search, User, AlertTriangle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-
-interface DebtRow {
-  id: string;
-  total_amount: number;
-  balance: number;
-  due_date: string | null;
-  status: string;
-  created_at: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  invoices: any;
-}
+import type { DebtRow } from "@/types/debt";
 
 interface DebtTableProps {
   debts: DebtRow[];

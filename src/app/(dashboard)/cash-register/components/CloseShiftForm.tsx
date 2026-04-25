@@ -65,9 +65,10 @@ const fmt = (n: number) =>
 interface CloseShiftFormProps {
   shift: { id: string; opening_amount: number; cash_registers?: { name: string } | null };
   summary: ShiftSummary;
+  isAdmin?: boolean;
 }
 
-export function CloseShiftForm({ shift, summary }: CloseShiftFormProps) {
+export function CloseShiftForm({ shift, summary, isAdmin = false }: CloseShiftFormProps) {
   const initialState: ActionState = { success: false, error: '' };
   const [state, action, isPending] = useActionState(closeShift, initialState);
   const formRef = useRef<HTMLFormElement>(null);
@@ -102,44 +103,50 @@ export function CloseShiftForm({ shift, summary }: CloseShiftFormProps) {
   return (
     <div className="w-full max-w-2xl mx-auto space-y-5">
 
-      {/* ── Header summary: opening + expected ───────────────────────── */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* ── Header summary ────────────────────────────────────────────── */}
+      <div className={`grid gap-3 ${isAdmin ? 'grid-cols-2' : 'grid-cols-1'}`}>
         <div className="p-4 rounded-xl border border-gray-200 bg-gray-50">
           <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Base Inicial</p>
           <p className="text-xl font-bold tabular-nums text-gray-900">{fmt(summary.opening_amount)}</p>
         </div>
-        <div className="p-4 rounded-xl border border-blue-200 bg-blue-50">
-          <p className="text-[11px] font-semibold text-blue-500 uppercase tracking-wide mb-1">Efectivo Esperado</p>
-          <p className="text-xl font-bold tabular-nums text-blue-700">{fmt(summary.expected_amount)}</p>
-          <p className="text-[10px] text-blue-400 mt-0.5">Base + ventas en efectivo</p>
+        {isAdmin && (
+          <div className="p-4 rounded-xl border border-blue-200 bg-blue-50">
+            <p className="text-[11px] font-semibold text-blue-500 uppercase tracking-wide mb-1">Efectivo Esperado</p>
+            <p className="text-xl font-bold tabular-nums text-blue-700">{fmt(summary.expected_amount)}</p>
+            <p className="text-[10px] text-blue-400 mt-0.5">Base + ventas en efectivo</p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Total sold banner (solo admin) ────────────────────────────── */}
+      {isAdmin && (
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 bg-white">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Vendido (todos los métodos)</span>
+          <span className="text-base font-bold tabular-nums text-gray-900">{fmt(summary.total_sales)}</span>
         </div>
-      </div>
+      )}
 
-      {/* ── Total sold banner ─────────────────────────────────────────── */}
-      <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 bg-white">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Vendido (todos los métodos)</span>
-        <span className="text-base font-bold tabular-nums text-gray-900">{fmt(summary.total_sales)}</span>
-      </div>
-
-      {/* ── Payment method breakdown: 1 col mobile / 2 col sm / 4 col lg ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {METHOD_CONFIG.map(({ key, label, sublabel, icon: Icon, color, bg, border }) => {
-          const value = summary[key] as number;
-          return (
-            <div
-              key={key}
-              className={`p-3 rounded-xl border ${border} ${bg} flex flex-col gap-1.5`}
-            >
-              <div className="flex items-center gap-1.5">
-                <Icon className={`w-3.5 h-3.5 ${color} shrink-0`} />
-                <span className={`text-[11px] font-semibold ${color} uppercase tracking-wide`}>{label}</span>
+      {/* ── Payment method breakdown (solo admin) ─────────────────────── */}
+      {isAdmin && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {METHOD_CONFIG.map(({ key, label, sublabel, icon: Icon, color, bg, border }) => {
+            const value = summary[key] as number;
+            return (
+              <div
+                key={key}
+                className={`p-3 rounded-xl border ${border} ${bg} flex flex-col gap-1.5`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <Icon className={`w-3.5 h-3.5 ${color} shrink-0`} />
+                  <span className={`text-[11px] font-semibold ${color} uppercase tracking-wide`}>{label}</span>
+                </div>
+                <p className={`text-base font-bold tabular-nums ${color}`}>{fmt(value)}</p>
+                <p className="text-[10px] text-gray-400">{sublabel}</p>
               </div>
-              <p className={`text-base font-bold tabular-nums ${color}`}>{fmt(value)}</p>
-              <p className="text-[10px] text-gray-400">{sublabel}</p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* ── Arqueo form ───────────────────────────────────────────────── */}
       <Card className="border border-gray-200 rounded-xl shadow-sm">

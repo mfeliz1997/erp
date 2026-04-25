@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import OverviewChart from "./OverviewChart";
 import CashAlerts from "./CashAlerts";
+import PeriodSelector from "./PeriodSelector";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 
@@ -50,9 +51,12 @@ function DeltaBadge({ current, prev }: { current: number; prev: number }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function OverviewPage(props: { searchParams: Promise<{ days?: string }> }) {
+export default async function OverviewPage(props: { searchParams: Promise<{ days?: string; from?: string; to?: string }> }) {
   const searchParams = await props.searchParams;
-  const period = parseInt(searchParams.days || "7");
+  const fromParam = searchParams.from ?? null;
+  const toParam   = searchParams.to   ?? null;
+  const isCustom  = !!fromParam && !!toParam;
+  const period    = isCustom ? null : parseInt(searchParams.days || "7");
 
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -68,11 +72,12 @@ export default async function OverviewPage(props: { searchParams: Promise<{ days
     .eq("id", user?.id)
     .single();
 
+  const rpcParams = isCustom
+    ? { p_tenant_id: profile?.tenant_id, p_from: fromParam, p_to: toParam }
+    : { p_tenant_id: profile?.tenant_id, p_days: period };
+
   const [{ data: statsData }, { data: recentActivity }] = await Promise.all([
-    supabase.rpc("get_dashboard_stats", {
-      p_tenant_id: profile?.tenant_id,
-      p_days: period,
-    }),
+    supabase.rpc("get_dashboard_stats", rpcParams),
     supabase
       .from("activity_logs")
       .select("*, profiles:user_id(full_name)")
@@ -96,7 +101,12 @@ export default async function OverviewPage(props: { searchParams: Promise<{ days
   };
 
   const ticketPromedio = stats.total_sales > 0 ? stats.total_revenue / stats.total_sales : 0;
-  const periodLabel = period === 7 ? "7 días" : period === 30 ? "este mes" : "este año";
+  const periodLabel = isCustom
+    ? `${fromParam} al ${toParam}`
+    : period === 1  ? "últimas 24 horas"
+    : period === 7  ? "últimos 7 días"
+    : period === 30 ? "este mes"
+    : "este año";
 
   return (
     <div className="p-4 md:p-6 space-y-5 max-w-7xl mx-auto pb-12">
@@ -111,22 +121,11 @@ export default async function OverviewPage(props: { searchParams: Promise<{ days
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Period selector */}
-          <div className="flex border border-border rounded-md overflow-hidden text-sm">
-            {([7, 30, 365] as const).map((d, i) => (
-              <Link
-                key={d}
-                href={`?days=${d}`}
-                className={`px-4 py-1.5 font-medium transition-colors ${
-                  period === d
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card text-muted-foreground hover:bg-muted"
-                } ${i > 0 ? "border-l border-border" : ""}`}
-              >
-                {d === 7 ? "7d" : d === 30 ? "Mes" : "Año"}
-              </Link>
-            ))}
-          </div>
+          <PeriodSelector
+            currentDays={period}
+            currentFrom={fromParam}
+            currentTo={toParam}
+          />
 
           {/* Quick action */}
           <Link

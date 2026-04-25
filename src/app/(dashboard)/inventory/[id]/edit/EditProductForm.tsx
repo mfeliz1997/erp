@@ -1,15 +1,18 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { updateProductAction } from "@/modules/inventory/actions";
 import imageCompression from "browser-image-compression";
 import { NumericFormat } from "react-number-format";
+import { useRouter } from "next/navigation";
 
 // 1. Añadimos image_url al tipo
 type ProductProps = {
   id: string;
   name: string;
   price: number;
+  wholesale_price_1?: number;
+  wholesale_price_2?: number;
   stock: number;
   min_stock_alert: number;
   image_url?: string | null;
@@ -20,8 +23,12 @@ const initialState = { success: false, error: undefined, data: undefined };
 
 export function EditProductForm({ product }: { product: ProductProps }) {
   const [state, formAction, isPending] = useActionState(updateProductAction, initialState);
-  
-  // 2. Estados para manejar la imagen y la compresión
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) router.push("/inventory");
+  }, [state.success, router]);
+
   const [imagePreview, setImagePreview] = useState<string | null>(product.image_url || null);
   const [isCompressing, setIsCompressing] = useState(false);
 
@@ -98,7 +105,7 @@ export function EditProductForm({ product }: { product: ProductProps }) {
 
  <div className="grid grid-cols-2 gap-4">
   <div className="space-y-2">
-    <label className="block text-sm font-semibold mb-2 text-gray-900">Precio Venta (RD$)</label>
+    <label className="block text-sm font-semibold mb-2 text-gray-900">Precio al Detalle (Retail Price)</label>
     <NumericFormat 
       name="price"
       defaultValue={product.price}
@@ -107,6 +114,32 @@ export function EditProductForm({ product }: { product: ProductProps }) {
       decimalScale={2}
       fixedDecimalScale
       required
+      className="w-full p-3 bg-white border border-gray-200 shadow-sm rounded-xl text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+    />
+  </div>
+  <div className="space-y-2">
+    <label className="block text-sm font-semibold mb-2 text-gray-900">Precio al por Mayor 1 (Wholesale 1)</label>
+    <NumericFormat
+      name="wholesale_price_1"
+      defaultValue={product.wholesale_price_1 || undefined}
+      thousandSeparator=","
+      prefix="$ "
+      decimalScale={2}
+      fixedDecimalScale
+      placeholder="$ 0.00"
+      className="w-full p-3 bg-white border border-gray-200 shadow-sm rounded-xl text-sm focus:ring-2 focus:ring-black outline-none transition-all"
+    />
+  </div>
+  <div className="space-y-2">
+    <label className="block text-sm font-semibold mb-2 text-gray-900">Precio al por Mayor 2 (Wholesale 2)</label>
+    <NumericFormat
+      name="wholesale_price_2"
+      defaultValue={product.wholesale_price_2 || undefined}
+      thousandSeparator=","
+      prefix="$ "
+      decimalScale={2}
+      fixedDecimalScale
+      placeholder="$ 0.00"
       className="w-full p-3 bg-white border border-gray-200 shadow-sm rounded-xl text-sm focus:ring-2 focus:ring-black outline-none transition-all"
     />
   </div>

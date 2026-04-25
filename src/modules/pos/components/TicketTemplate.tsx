@@ -5,15 +5,16 @@ import { useMemo } from 'react';
 interface TicketTemplateProps {
   data: any;
   tenant: any;
+  width?: string;
 }
 
-export function TicketTemplate({ data, tenant }: TicketTemplateProps) {
+export function TicketTemplate({ data, tenant, width = '80mm' }: TicketTemplateProps) {
   if (!data) return null;
   const itbis = data.total ? data.total * 0.18 : 0;
   const subtotal = data.total ? data.total - itbis : 0;
 
   return (
-    <div id="thermal-ticket" className="print:block hidden w-[80mm] p-4 font-mono text-[12px] leading-tight text-black bg-white">
+    <div id="thermal-ticket" className="print:block hidden p-4 font-mono text-[12px] leading-tight text-black bg-white" style={{ width }}>
       <div className="text-center space-y-1 mb-4 border-b pb-2 border-black border-solid">
         <h1 className="font-bold text-lg ">{tenant?.name || 'INVENZA ERP'}</h1>
         <p className="text-xs ">{tenant?.address || 'Dominican Republic'}</p>

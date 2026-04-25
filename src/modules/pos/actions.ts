@@ -48,16 +48,23 @@ export async function validateAdminPin(pin: string): Promise<PosActionState> {
 export interface ProcessSaleInput {
   cart: CartItem[];
   total: number;
+  subtotal?: number;
   customerName: string;
   customerRnc: string;
   customerPhone: string;
-  ncfType: "B01" | "B02";
+  ncfType: "B01" | "none";
   paymentMethod: "cash" | "credit" | "transfer" | "card";
   customerId?: string;
   receivedAmount?: number;
   creditDays?: number;
   authPin?: string;
   userRole?: string;
+  creditAuthorizerId?: string;
+  newCreditLimit?: number;
+  priceTier?: string;
+  discountId?: string;
+  discountName?: string;
+  discountAmount?: number;
 }
 
 const REQUIRES_PIN_ROLES = ["pos"];
@@ -69,7 +76,7 @@ export async function processSaleAction(
   const {
     cart, total, customerName, customerRnc, customerPhone,
     ncfType, paymentMethod, receivedAmount,
-    authPin, userRole,
+    authPin, userRole, creditAuthorizerId,
   } = input;
 
   try {
@@ -127,7 +134,7 @@ export async function processSaleAction(
       }
     }
 
-    // 2. Validar regla DGII
+    // 2. Validar regla DGII — B01 exige RNC; 'none' es recibo interno (sin secuencia)
     if (ncfType === "B01" && !customerRnc) {
       return {
         success: false,
@@ -135,8 +142,51 @@ export async function processSaleAction(
       };
     }
 
-    // 3. Upsert del cliente por teléfono
+    // 3. Descontar Inventario Seguro (Early Return con Rollback manual)
+    const successfulDeductions: { id: string; qty: number }[] = [];
+    for (const item of cart) {
+      const { data: success, error: stockError } = await supabase.rpc(
+        "decrement_stock_safe",
+        { p_product_id: item.id, p_qty: item.cartQuantity },
+      );
+
+      if (!success || stockError) {
+        // Rollback previous stock deductions
+        for (const ded of successfulDeductions) {
+          await supabase.rpc("decrement_stock_safe", {
+            p_product_id: ded.id,
+            p_qty: -ded.qty,
+          });
+        }
+        return {
+          success: false,
+          error: `Stock insuficiente para ${item.name}. Venta cancelada.`,
+        };
+      }
+      successfulDeductions.push({ id: item.id, qty: item.cartQuantity });
+    }
+
+    // Helper for rolling back stock on fatal errors
+    const rollbackStock = async () => {
+      for (const ded of successfulDeductions) {
+        await supabase.rpc("decrement_stock_safe", {
+          p_product_id: ded.id,
+          p_qty: -ded.qty,
+        });
+      }
+    };
+
+    // 4. Upsert del cliente por teléfono (y aplicar nuevo límite de crédito si aplica)
     let resolvedCustomerId = input.customerId;
+    const canSetCredit = effectiveRole === "admin" || effectiveRole === "manager";
+    const updatePayload: any = {
+      ...(customerName && { name: customerName }),
+      ...(customerRnc && { tax_id: customerRnc }),
+    };
+    if (canSetCredit && input.newCreditLimit !== undefined) {
+      updatePayload.credit_limit = input.newCreditLimit;
+    }
+
     if (customerPhone) {
       const { data: existing } = await supabase
         .from("customers")
@@ -146,13 +196,9 @@ export async function processSaleAction(
         .maybeSingle();
 
       if (existing) {
-        await supabase
-          .from("customers")
-          .update({
-            ...(customerName && { name: customerName }),
-            ...(customerRnc  && { tax_id: customerRnc }),
-          })
-          .eq("id", existing.id);
+        if (Object.keys(updatePayload).length > 0) {
+          await supabase.from("customers").update(updatePayload).eq("id", existing.id);
+        }
         resolvedCustomerId = existing.id;
       } else if (customerName) {
         const { data: created } = await supabase
@@ -162,6 +208,7 @@ export async function processSaleAction(
             name: customerName.trim(),
             phone: customerPhone,
             tax_id: customerRnc || null,
+            ...(canSetCredit && input.newCreditLimit !== undefined ? { credit_limit: input.newCreditLimit } : {}),
           })
           .select("id")
           .single();
@@ -169,22 +216,56 @@ export async function processSaleAction(
       }
     }
 
-    // 4. Obtener NCF Atómico (Motor Fiscal)
+    // 5. Obtener NCF Atómico — solo si es B01 (comprobante fiscal real)
     let ncf = "RECIBO-INTERNO";
-    if (ncfType) {
-      const { data: nextNcf, error: ncfError } = await supabase.rpc("generate_next_ncf", {
-        p_tenant_id: profile.tenant_id,
-        p_type: ncfType,
-      });
+    let usedSequenceNum: number | null = null;
+    if (ncfType && ncfType !== "none") {
+      let attempts = 0;
+      let ncfGenerated = false;
+      while (attempts < 5) {
+        const { data: seq } = await supabase
+          .from("ncf_sequences")
+          .select("*")
+          .eq("tenant_id", profile.tenant_id)
+          .eq("type", ncfType)
+          .eq("is_active", true)
+          .maybeSingle();
 
-      if (ncfError) {
-        console.error("Error generating NCF:", ncfError);
-      } else if (nextNcf) {
-        ncf = nextNcf;
+        if (!seq) {
+          await rollbackStock();
+          return { success: false, error: `No hay secuencia NCF activa para ${ncfType}` };
+        }
+
+        if (seq.current_sequence >= seq.max_limit) {
+          await rollbackStock();
+          return { success: false, error: `Secuencia NCF agotada para ${ncfType}` };
+        }
+
+        const nextSeq = seq.current_sequence + 1;
+        const { data: updated } = await supabase
+          .from("ncf_sequences")
+          .update({ current_sequence: nextSeq })
+          .eq("id", seq.id)
+          .eq("current_sequence", seq.current_sequence)
+          .select()
+          .maybeSingle();
+
+        if (updated) {
+          ncf = `${seq.prefix}${String(nextSeq).padStart(8, "0")}`;
+          usedSequenceNum = nextSeq;
+          ncfGenerated = true;
+          break;
+        }
+        attempts++;
+      }
+
+      if (!ncfGenerated) {
+        await rollbackStock();
+        return { success: false, error: "Alta concurrencia: No se pudo asignar NCF. Intente nuevamente." };
       }
     }
 
-    // 5. Crear Factura
+    // 6. Crear Factura
     const { data: invoice, error: invoiceError } = await supabase
       .from("invoices")
       .insert({
@@ -196,6 +277,10 @@ export async function processSaleAction(
         rnc_customer: customerRnc || null,
         ncf_type: ncfType,
         ncf: ncf,
+        subtotal: input.subtotal ?? total,
+        discount_id: input.discountId ?? null,
+        discount_name: input.discountName ?? null,
+        discount_amount: input.discountAmount ?? 0,
         total: total,
         payment_method: paymentMethod,
         amount_received: receivedAmount || total,
@@ -204,44 +289,41 @@ export async function processSaleAction(
       .select()
       .single();
 
-    if (invoiceError)
+    if (invoiceError) {
+      await rollbackStock();
       return {
         success: false,
         error: `Error factura: ${invoiceError.message}`,
       };
-
-    // 6. Descontar Inventario Seguro
-    for (const item of cart) {
-      const { data: success, error: stockError } = await supabase.rpc(
-        "decrement_stock_safe",
-        { p_product_id: item.id, p_qty: item.cartQuantity },
-      );
-
-      if (!success || stockError) {
-        await supabase
-          .from("invoices")
-          .update({ status: "cancelled" })
-          .eq("id", invoice.id);
-        return {
-          success: false,
-          error: `Stock insuficiente para ${item.name}. Venta cancelada.`,
-        };
-      }
     }
 
-    // 7. Generar Detalle de Factura
+    // 7. Generar Detalle de Factura — unit_price already resolved by CartProvider
     const invoiceItems = cart.map((item) => ({
       tenant_id: profile.tenant_id,
       invoice_id: invoice.id,
       product_id: item.id,
       product_name: item.name,
       quantity: item.cartQuantity,
-      unit_price: item.price,
-      total: item.price * item.cartQuantity,
+      unit_price: item.unit_price,
+      total: item.unit_price * item.cartQuantity,
     }));
     await supabase.from("invoice_items").insert(invoiceItems);
 
-    // 8. Si es A CRÉDITO, registrar deuda y actualizar current_debt del cliente
+    // 8. Registro de NCF usado (Auditoría Fiscal)
+    if (ncf !== "RECIBO-INTERNO" && usedSequenceNum !== null) {
+      await supabase.from("ncf_used_sequences").insert({
+        tenant_id: profile.tenant_id,
+        invoice_id: invoice.id,
+        ncf_type: ncfType,
+        ncf_number: ncf,
+        sequence_num: usedSequenceNum,
+        customer_name: customerName || "Consumidor Final",
+        customer_rnc: customerRnc || null,
+        total,
+      });
+    }
+
+    // 9. Si es A CRÉDITO, registrar deuda y actualizar current_debt del cliente
     if (paymentMethod === "credit") {
       const { error: debtError } = await supabase.from("debts").insert({
         tenant_id: profile.tenant_id,
@@ -261,14 +343,42 @@ export async function processSaleAction(
       }
     }
 
-    // 9. Auditoría Final (Log de Actividad)
+    // 10. Auditoría Final (Log de Actividad)
     await supabase.from("activity_logs").insert({
       tenant_id: profile.tenant_id,
       user_id: user.id,
       action: "sale",
-      description: `Usuario ${profile.full_name || 'Sistema'} realizó venta #${invoice.id.split('-')[0].toUpperCase()} por RD$${total.toLocaleString()}`,
-      metadata: { invoice_id: invoice.id, total, ncf, method: paymentMethod },
+      description: `${profile.full_name || 'Sistema'} realizó venta #${invoice.id.split('-')[0].toUpperCase()} por RD$${total.toLocaleString()} (${paymentMethod})${input.discountName ? ` [descuento: ${input.discountName}]` : ''}`,
+      metadata: {
+        invoice_id: invoice.id,
+        ncf,
+        total,
+        method: paymentMethod,
+        customer_id: resolvedCustomerId ?? null,
+        customer_name: customerName || "Consumidor Final",
+        ncf_type: ncfType,
+        credit_authorized_by: creditAuthorizerId ?? null,
+      },
     });
+
+    // 10b. Si hubo override de crédito, log específico de autorización
+    if (paymentMethod === "credit" && creditAuthorizerId) {
+      await supabase.from("activity_logs").insert({
+        tenant_id: profile.tenant_id,
+        user_id: user.id,
+        action: "credit_override",
+        description: `Venta a crédito #${invoice.id.split('-')[0].toUpperCase()} por RD$${total.toLocaleString()} fue autorizada (override de límite/sin crédito)`,
+        metadata: {
+          invoice_id: invoice.id,
+          total,
+          customer_id: resolvedCustomerId ?? null,
+          customer_name: customerName || "Consumidor Final",
+          authorized_by: creditAuthorizerId,
+          requested_by: user.id,
+          requested_by_name: profile.full_name,
+        },
+      });
+    }
 
     // ------------------------------------------------------------------
     // FASE 4: WHATSAPP AUTOMÁTICO
@@ -285,6 +395,7 @@ export async function processSaleAction(
     revalidatePath("/inventory");
     revalidatePath("/invoices");
     revalidatePath("/activity");
+    revalidatePath("/fiscal");
     if (paymentMethod === "credit") {
       revalidatePath("/accounts-receivable");
       revalidatePath("/debts");

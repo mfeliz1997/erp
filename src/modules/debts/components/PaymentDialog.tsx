@@ -15,14 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
-interface DebtRow {
-  id: string;
-  total_amount: number;
-  balance: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  invoices: any;
-}
+import type { DebtRow } from "@/types/debt";
 
 interface PaymentDialogProps {
   debt: DebtRow;

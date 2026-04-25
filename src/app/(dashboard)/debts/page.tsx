@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase";
 import { DebtTable } from "@/modules/debts/components/DebtTable";
 import { Landmark } from "lucide-react";
 import { redirect } from "next/navigation";
+import { normaliseDebtRow } from "@/types/debt";
 
 export default async function DebtsPage() {
   const supabase = await createClient();
@@ -27,7 +28,8 @@ export default async function DebtsPage() {
     .eq("status", "open")
     .order("created_at", { ascending: false });
 
-  const totalBalance = (debts ?? []).reduce((acc, d) => acc + Number(d.balance), 0);
+  const normalisedDebts = (debts ?? []).map(normaliseDebtRow);
+  const totalBalance = normalisedDebts.reduce((acc, d) => acc + Number(d.balance), 0);
 
   return (
     <div className="p-4 pt-16 lg:pt-8 lg:p-8 max-w-7xl mx-auto space-y-10">
@@ -51,7 +53,7 @@ export default async function DebtsPage() {
         </div>
       </div>
 
-      <DebtTable debts={debts ?? []} />
+      <DebtTable debts={normalisedDebts} />
     </div>
   );
 }

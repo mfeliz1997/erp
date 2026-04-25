@@ -204,10 +204,34 @@ const handleSubmit = async (formData: FormData) => {
     />
   </div>
   <div className="space-y-2">
-    <label className="block text-sm font-semibold text-gray-900">Precio de Venta</label>
+    <label className="block text-sm font-semibold text-gray-900">Precio al Detalle (Retail Price)</label>
     <NumericFormat 
       name="price" 
       required
+      thousandSeparator="," 
+      prefix="$ " 
+      decimalScale={2}
+      fixedDecimalScale
+      placeholder="$ 0.00"
+      className="w-full border border-gray-200 rounded-xl py-3 px-3 bg-white focus:ring-2 focus:ring-black outline-none text-sm shadow-sm"
+    />
+  </div>
+  <div className="space-y-2">
+    <label className="block text-sm font-semibold text-gray-900">Precio al por Mayor 1 (Wholesale 1)</label>
+    <NumericFormat 
+      name="wholesale_price_1" 
+      thousandSeparator="," 
+      prefix="$ " 
+      decimalScale={2}
+      fixedDecimalScale
+      placeholder="$ 0.00"
+      className="w-full border border-gray-200 rounded-xl py-3 px-3 bg-white focus:ring-2 focus:ring-black outline-none text-sm shadow-sm"
+    />
+  </div>
+  <div className="space-y-2">
+    <label className="block text-sm font-semibold text-gray-900">Precio al por Mayor 2 (Wholesale 2)</label>
+    <NumericFormat 
+      name="wholesale_price_2" 
       thousandSeparator="," 
       prefix="$ " 
       decimalScale={2}

@@ -12,8 +12,9 @@ const CustomerSchema = z.object({
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   credit_limit: z.coerce.number().min(0, "Monto inválido").default(0),
   company_name: z.string().optional(),
+  ncf_type: z.string().optional().or(z.literal("")).or(z.literal("NONE")),
+  price_tier: z.enum(['retail', 'wholesale_1', 'wholesale_2']).default('retail'),
 });
-
 const UpdateCustomerSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(2, "El nombre es obligatorio"),
@@ -23,6 +24,8 @@ const UpdateCustomerSchema = z.object({
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   credit_limit: z.coerce.number().min(0, "Monto inválido").default(0),
   company_name: z.string().optional(),
+  ncf_type: z.string().optional().or(z.literal("")).or(z.literal("NONE")),
+  price_tier: z.enum(['retail', 'wholesale_1', 'wholesale_2']).default('retail'),
 });
 
 export type ActionState = {
@@ -45,6 +48,8 @@ export async function createCustomer(prevState: ActionState, formData: FormData)
       phone: formData.get("phone"),
       email: formData.get("email"),
       credit_limit: formData.get("credit_limit"),
+      ncf_type: formData.get("ncf_type"),
+      price_tier: formData.get("price_tier"),
     });
 
     if (!validatedFields.success) {
@@ -67,6 +72,7 @@ export async function createCustomer(prevState: ActionState, formData: FormData)
       .insert({
         tenant_id: profile.tenant_id,
         ...validatedFields.data,
+        ncf_type: validatedFields.data.ncf_type === 'NONE' ? null : validatedFields.data.ncf_type,
         current_debt: 0,
       })
       .select()
@@ -111,6 +117,8 @@ export async function updateCustomer(prevState: ActionState, formData: FormData)
       email:        formData.get("email"),
       credit_limit: formData.get("credit_limit"),
       company_name: formData.get("company_name"),
+      ncf_type:     formData.get("ncf_type"),
+      price_tier:   formData.get("price_tier"),
     });
 
     if (!parsed.success) {
@@ -121,7 +129,10 @@ export async function updateCustomer(prevState: ActionState, formData: FormData)
 
     const { data: updated, error } = await supabase
       .from("customers")
-      .update(fields)
+      .update({
+        ...fields,
+        ncf_type: fields.ncf_type === 'NONE' ? null : fields.ncf_type,
+      })
       .eq("id", id)
       .eq("tenant_id", profile.tenant_id)
       .select()

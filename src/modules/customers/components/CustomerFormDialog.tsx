@@ -88,9 +88,41 @@ export function CustomerFormDialog({ onSuccess, trigger }: CustomerFormDialogPro
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className=" text-xs font-bold  text-zinc-400">Correo Electrónico</Label>
+                <Input id="email" name="email" type="email" placeholder="cliente@ejemplo.com" className="rounded-xl border-black border-2 h-11 font-bold" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="price_tier" className=" text-xs font-bold  text-zinc-400">Nivel de Precio</Label>
+                <Select name="price_tier" defaultValue="retail">
+                  <SelectTrigger className="rounded-xl border-black border-2 h-11 font-bold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border border-gray-200">
+                    <SelectItem value="retail">Normal (Retail)</SelectItem>
+                    <SelectItem value="wholesale_1">Al por Mayor 1</SelectItem>
+                    <SelectItem value="wholesale_2">Al por Mayor 2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="email" className=" text-xs font-bold  text-zinc-400">Correo Electrónico</Label>
-              <Input id="email" name="email" type="email" placeholder="cliente@ejemplo.com" className="rounded-xl border-black border-2 h-11 font-bold" />
+              <Label htmlFor="ncf_type" className=" text-xs font-bold  text-zinc-400">Comprobante Preferido</Label>
+              <Select name="ncf_type" defaultValue="NONE">
+                <SelectTrigger className="rounded-xl border-black border-2 h-11 font-bold">
+                  <SelectValue placeholder="Ninguno" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-gray-200">
+                  <SelectItem value="NONE">Ninguno (Consumo Final)</SelectItem>
+                  <SelectItem value="B01">B01 - Crédito Fiscal</SelectItem>
+                  <SelectItem value="B02">B02 - Consumo Final</SelectItem>
+                  <SelectItem value="B14">B14 - Gubernamental</SelectItem>
+                  <SelectItem value="B15">B15 - Exportaciones</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

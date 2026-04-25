@@ -37,8 +37,8 @@ export default async function CashRegisterPage() {
       id, opening_amount, closing_amount, expected_amount,
       amount_difference, has_discrepancy, payment_breakdown,
       status, opened_at, closed_at,
-      profiles(full_name),
-      cash_registers(name)
+      profiles!cash_shifts_user_id_profiles_fkey(full_name),
+      cash_registers!cash_shifts_register_id_fkey(name)
     `)
     .eq("tenant_id", profile.tenant_id)
     .eq("status", "CLOSED")
@@ -50,7 +50,7 @@ export default async function CashRegisterPage() {
   // Turno abierto del usuario actual
   const { data: myOpenShift } = await supabase
     .from("cash_shifts")
-    .select("*, cash_registers(name)")
+    .select("*, cash_registers!cash_shifts_register_id_fkey(name)")
     .eq("tenant_id", profile.tenant_id)
     .eq("user_id", user.id)
     .eq("status", "OPEN")
@@ -64,7 +64,7 @@ export default async function CashRegisterPage() {
   if (isAdmin) {
     const { data: openShifts } = await supabase
       .from("cash_shifts")
-      .select("*, profiles(full_name), cash_registers(name)")
+      .select("*, profiles!cash_shifts_user_id_profiles_fkey(full_name), cash_registers!cash_shifts_register_id_fkey(name)")
       .eq("tenant_id", profile.tenant_id)
       .eq("status", "OPEN");
     
@@ -182,7 +182,7 @@ export default async function CashRegisterPage() {
             </div>
             <p className="text-xs text-muted-foreground text-right">Caja: {myOpenShift.cash_registers?.name}</p>
           </div>
-          <CloseShiftForm shift={myOpenShift} summary={summary} />
+          <CloseShiftForm shift={myOpenShift} summary={summary} isAdmin={isAdmin} />
         </div>
       );
     }

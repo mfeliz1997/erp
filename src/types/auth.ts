@@ -12,6 +12,7 @@ export interface UserProfile {
   can_use_card: boolean;
   can_use_transfer: boolean;
   can_sell_without_shift: boolean;
+  can_apply_discount: boolean;
   assigned_register_id: string | null;
   pin_code: string | null;
   is_owner: boolean;
@@ -38,6 +39,7 @@ export const ALL_ROUTES = [
   { path: '/invoices',       label: 'Historial de Ventas' },
   { path: '/customers',      label: 'Clientes'            },
   { path: '/debts',          label: 'Cuentas por Cobrar'  },
+  { path: '/discounts',      label: 'Descuentos'          },
   { path: '/reports',        label: 'Reportes'            },
   { path: '/fiscal',         label: 'Gestión Fiscal'      },
   { path: '/activity',       label: 'Auditoría'           },

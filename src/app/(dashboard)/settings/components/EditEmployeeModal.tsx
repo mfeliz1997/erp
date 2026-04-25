@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { KeyRound, CreditCard, Landmark, Clock, ShieldOff, Monitor, ShoppingBag, Users } from 'lucide-react';
+import { KeyRound, CreditCard, Landmark, Clock, ShieldOff, Monitor, ShoppingBag, Users, Tag } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { UserRole, UserProfile } from '@/types/auth';
 import { ALL_ROUTES, ROLE_DEFAULT_ROUTES } from '@/types/auth';
@@ -31,7 +31,7 @@ interface Register { id: string; name: string; }
 type EditableEmployee = Pick<UserProfile,
   'id' | 'full_name' | 'phone' | 'role' | 'allowed_routes' |
   'can_give_credit' | 'max_credit_days' | 'can_use_card' | 'can_use_transfer' |
-  'can_sell_without_shift' | 'assigned_register_id' |
+  'can_sell_without_shift' | 'can_apply_discount' | 'assigned_register_id' |
   'pin_code' | 'is_owner'
 > & { can_edit_customers?: boolean };
 
@@ -53,6 +53,7 @@ export function EditEmployeeModal({
   const [canUseTransfer, setCanUseTransfer]           = useState(employee.can_use_transfer ?? false);
   const [canSellWithoutShift, setCanSellWithoutShift] = useState(employee.can_sell_without_shift ?? false);
   const [canEditCustomers, setCanEditCustomers]       = useState(employee.can_edit_customers ?? false);
+  const [canApplyDiscount, setCanApplyDiscount]       = useState(employee.can_apply_discount ?? false);
   const [assignedRegisterId, setAssignedRegisterId]   = useState<string>(employee.assigned_register_id ?? 'none');
 
   function handleRoleChange(role: UserRole) {
@@ -80,6 +81,7 @@ export function EditEmployeeModal({
     formData.set('can_use_transfer', String(canUseTransfer));
     formData.set('can_sell_without_shift', String(canSellWithoutShift));
     formData.set('can_edit_customers', String(canEditCustomers));
+    formData.set('can_apply_discount', String(canApplyDiscount));
     formData.set('assigned_register_id', assignedRegisterId === 'none' ? '' : assignedRegisterId);
 
     const result = await updateEmployeeAction(formData);
@@ -242,6 +244,18 @@ export function EditEmployeeModal({
                 </div>
               </div>
               <Switch checked={canEditCustomers} onCheckedChange={setCanEditCustomers} />
+            </div>
+
+            {/* Apply discount */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div className="flex items-center gap-3">
+                <Tag className="w-4 h-4 text-gray-500" />
+                <div>
+                  <p className="text-xs font-semibold">Aplicar Descuentos</p>
+                  <p className="text-xs text-gray-400">Puede aplicar descuentos en el POS</p>
+                </div>
+              </div>
+              <Switch checked={canApplyDiscount} onCheckedChange={setCanApplyDiscount} />
             </div>
           </div>
 

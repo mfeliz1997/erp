@@ -1,8 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Printer, Loader2 } from "lucide-react";
-import { useThermalPrinter } from "@/hooks/useThermalPrinter";
 import { TicketTemplate } from "./TicketTemplate";
 import { useState } from "react";
 
@@ -14,30 +12,48 @@ interface PrintTicketButtonProps {
 
 export function PrintTicketButton({ invoice, invoiceData, tenant }: PrintTicketButtonProps) {
   const data = invoice || invoiceData;
-  const { print, isPrinting } = useThermalPrinter();
-  
-  const handlePrint = async () => {
-    // Obtenemos la config de localStorage (donde Settings la guardó)
-    const savedConfig = localStorage.getItem('invenza-printer-config');
-    const config = savedConfig ? JSON.parse(savedConfig) : { method: 'network', width: '80mm' };
+  const [isPrinting, setIsPrinting] = useState(false);
+  const [paperWidth, setPaperWidth] = useState<string>('80mm');
 
-    await print(config, data);
+  const handlePrint = () => {
+    setIsPrinting(true);
+
+    const savedConfig = localStorage.getItem('invenza-printer-config');
+    const config = savedConfig ? JSON.parse(savedConfig) : { width: '80mm' };
+    const width: string = config.width ?? '80mm';
+    setPaperWidth(width);
+
+    // Inyectar @page con el tamaño real — CSS no permite cambiarlo dinámicamente de otra forma
+    const style = document.createElement('style');
+    style.id = '__ticket-page-size__';
+    style.textContent = `@media print { @page { size: ${width} auto; margin: 0; } }`;
+    document.head.appendChild(style);
+
+    window.print();
+
+    const cleanup = () => {
+      document.getElementById('__ticket-page-size__')?.remove();
+      setIsPrinting(false);
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
   };
 
   return (
     <>
-      {/* Botón Principal */}
-      <Button 
+      <button
         onClick={handlePrint}
         disabled={isPrinting}
-        className="w-full h-14 bg-primary text-primary-foreground font-semibold   rounded-xl hover:bg-zinc-800"
+        className="ap-btn-secondary w-full h-10 text-sm disabled:opacity-50"
       >
-        {isPrinting ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Printer className="w-5 h-5 mr-3" />}
-        Imprimir Ticket
-      </Button>
+        {isPrinting
+          ? <Loader2 className="w-4 h-4 animate-spin" />
+          : <Printer className="w-4 h-4" />}
+        Imprimir
+      </button>
 
-      {/* Template oculto para window.print() */}
-      <TicketTemplate data={data} tenant={tenant} />
+      {/* Plantilla oculta — solo visible en @media print */}
+      <TicketTemplate data={data} tenant={tenant} width={paperWidth} />
     </>
   );
 }

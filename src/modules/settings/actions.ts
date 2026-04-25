@@ -52,6 +52,7 @@ export async function createEmployeeAction(formData: FormData): Promise<ActionRe
     const canUseTransfer       = formData.get("can_use_transfer") === "true";
     const canSellWithoutShift  = formData.get("can_sell_without_shift") === "true";
     const canEditCustomers     = formData.get("can_edit_customers") === "true";
+    const canApplyDiscount     = formData.get("can_apply_discount") === "true";
     const assignedRegisterRaw  = (formData.get("assigned_register_id") as string)?.trim();
     const assignedRegisterId   = assignedRegisterRaw || null;
     const pinCodeRaw           = (formData.get("pin_code") as string)?.trim();
@@ -87,6 +88,7 @@ export async function createEmployeeAction(formData: FormData): Promise<ActionRe
       can_use_transfer:       canUseTransfer,
       can_sell_without_shift: canSellWithoutShift,
       can_edit_customers:     canEditCustomers,
+      can_apply_discount:     canApplyDiscount,
       assigned_register_id:   assignedRegisterId,
       pin_code:               pinCode,
     });
@@ -120,6 +122,7 @@ export async function updateEmployeeAction(formData: FormData): Promise<ActionRe
     const canUseTransfer       = formData.get("can_use_transfer") === "true";
     const canSellWithoutShift  = formData.get("can_sell_without_shift") === "true";
     const canEditCustomers     = formData.get("can_edit_customers") === "true";
+    const canApplyDiscount     = formData.get("can_apply_discount") === "true";
     const assignedRegisterRaw  = (formData.get("assigned_register_id") as string)?.trim();
     const assignedRegisterId   = assignedRegisterRaw || null;
     const pinCodeRaw           = (formData.get("pin_code") as string)?.trim();
@@ -145,6 +148,7 @@ export async function updateEmployeeAction(formData: FormData): Promise<ActionRe
       can_use_transfer:       canUseTransfer,
       can_sell_without_shift: canSellWithoutShift,
       can_edit_customers:     canEditCustomers,
+      can_apply_discount:     canApplyDiscount,
       assigned_register_id:   assignedRegisterId,
     };
     if (pinCode !== undefined) profileUpdates.pin_code = pinCode;

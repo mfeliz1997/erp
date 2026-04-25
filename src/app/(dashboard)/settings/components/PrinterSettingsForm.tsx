@@ -1,122 +1,106 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Printer, Wifi, Hash, Save, HardDrive, Bluetooth, Usb } from "lucide-react";
+import { Hash, Save, HardDrive, Printer } from "lucide-react";
 import { toast } from "sonner";
-import { useThermalPrinter } from "@/hooks/useThermalPrinter";
+
+const STORAGE_KEY = 'invenza-printer-config';
+
+interface PrinterConfig {
+  width: '80mm' | '58mm';
+  copies: number;
+}
+
+const DEFAULT_CONFIG: PrinterConfig = {
+  width: '80mm',
+  copies: 1,
+};
 
 export function PrinterSettingsForm() {
-  const { connectBluetooth, connectUSB } = useThermalPrinter();
-  
+  const [config, setConfig] = useState<PrinterConfig>(DEFAULT_CONFIG);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setConfig({ ...DEFAULT_CONFIG, ...JSON.parse(saved) });
+    } catch {}
+  }, []);
+
   const handleSave = () => {
-    toast.success("Configuración de impresión guardada localmente");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    toast.success("Configuración de impresión guardada");
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="rounded-xl border border-gray-200">
-          <CardHeader>
-            <CardTitle className="  font-semibold text-2xl flex items-center gap-2">
-              <Printer className="w-5 h-5" />
-              Terminal de Impresión
-            </CardTitle>
-            <CardDescription className="text-xs font-bold  ">Hardware de Punto de Venta</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label className=" text-xs font-bold  text-zinc-400">Método de Conexión Primario</Label>
-              <Select defaultValue="network">
-                <SelectTrigger className="rounded-xl border border-gray-200 h-12 font-bold">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border border-gray-200 font-bold">
-                  <SelectItem value="network">🛜 Red / WiFi (Sistema)</SelectItem>
-                  <SelectItem value="usb">🔌 USB Directo (Serial)</SelectItem>
-                  <SelectItem value="bluetooth">🔵 Bluetooth (Inalámbrico)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+    <div className="max-w-md space-y-6">
+      <Card className="rounded-xl border border-gray-200">
+        <CardHeader>
+          <CardTitle className="font-semibold text-2xl flex items-center gap-2">
+            <HardDrive className="w-5 h-5" />
+            Formato del Ticket
+          </CardTitle>
+          <CardDescription className="text-xs font-bold">
+            El ticket se imprime usando la impresora predeterminada del sistema.
+            Asegúrate de que esté configurada en Windows o macOS antes de imprimir.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
 
-            <div className="grid grid-cols-2 gap-4">
-               <Button variant="outline" size="sm" onClick={connectUSB} className="rounded-xl border border-gray-200 font-semibold  text-xs  h-10 bg-yellow-50">
-                 <Usb className="w-4 h-4 mr-2" /> Detectar USB / BT Serial
-               </Button>
-               <Button variant="outline" size="sm" onClick={connectBluetooth} className="rounded-xl border border-gray-200 font-semibold  text-xs  h-10">
-                 <Bluetooth className="w-4 h-4 mr-2" /> Bluetooth Directo
-               </Button>
-            </div>
+          <div className="space-y-2">
+            <Label className="text-xs font-bold text-zinc-400">Ancho del Papel</Label>
+            <Select
+              value={config.width}
+              onValueChange={(v) => setConfig(c => ({ ...c, width: v as PrinterConfig['width'] }))}
+            >
+              <SelectTrigger className="rounded-xl border border-gray-200 h-12 font-bold">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border border-gray-200">
+                <SelectItem value="80mm">80mm (Estándar)</SelectItem>
+                <SelectItem value="58mm">58mm (Pequeño)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Label className=" text-xs font-bold  text-zinc-400">Endpoint / IP Host</Label>
-              <div className="relative">
-                <Wifi className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input placeholder="192.168.1.100" className="pl-10 rounded-xl border border-gray-200 h-12 font-bold" />
-              </div>
+          <div className="space-y-2">
+            <Label className="text-xs font-bold text-zinc-400">Copias por Venta</Label>
+            <div className="relative">
+              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+              <Input
+                type="number"
+                min={1}
+                max={5}
+                value={config.copies}
+                onChange={(e) => setConfig(c => ({ ...c, copies: Number(e.target.value) }))}
+                className="pl-10 rounded-xl border border-gray-200 h-12 font-bold"
+              />
             </div>
+          </div>
 
-            <div className="flex items-center justify-between p-4 bg-zinc-50 border border-gray-200 border-solid">
-              <div className="space-y-0.5">
-                <Label className="text-xs font-semibold  tracking-tight">Impresión Automática</Label>
-                <p className="text-xs text-zinc-500 font-medium">Imprimir ticket al cerrar la venta</p>
-              </div>
-              <Switch />
-            </div>
-          </CardContent>
-        </Card>
+          <Button
+            onClick={handleSave}
+            className="w-full bg-primary text-primary-foreground h-12 font-semibold rounded-xl hover:bg-zinc-800 transition-all"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            Guardar
+          </Button>
+        </CardContent>
+      </Card>
 
-        <Card className="rounded-xl border border-gray-200">
-          <CardHeader>
-            <CardTitle className="  font-semibold text-2xl flex items-center gap-2">
-              <HardDrive className="w-5 h-5" />
-              Diseño de Salida
-            </CardTitle>
-            <CardDescription className="text-xs font-bold  ">Personalización del Formato</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label className=" text-xs font-bold  text-zinc-400">Ancho del Papel</Label>
-              <Select defaultValue="80mm">
-                <SelectTrigger className="rounded-xl border border-gray-200 h-12 font-bold">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl border border-gray-200">
-                  <SelectItem value="80mm">80mm (Estándar)</SelectItem>
-                  <SelectItem value="58mm">58mm (Pequeño)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className=" text-xs font-bold  text-zinc-400">Copias por Venta</Label>
-              <div className="relative">
-                <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <Input type="number" defaultValue="1" className="pl-10 rounded-xl border border-gray-200 h-12 font-bold" />
-              </div>
-            </div>
-            
-            <Button onClick={handleSave} className="w-full bg-primary text-primary-foreground h-12 font-semibold   rounded-xl hover:bg-zinc-800 transition-all">
-              <Save className="w-4 h-4 mr-2" />
-              Guardar Perfil de Impresión
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="bg-amber-50 border-l-4 border-amber-500 p-4 space-y-2">
-        <p className="text-xs font-semibold text-amber-800  tracking-tight">
-          ⚠️ Notas de Hardware:
+      <div className="p-4 border border-dashed border-gray-300 rounded-xl space-y-2">
+        <p className="text-xs font-semibold text-zinc-600 flex items-center gap-2">
+          <Printer className="w-3.5 h-3.5" /> ¿Cómo funciona?
         </p>
-        <ul className="text-xs text-amber-700 font-bold  list-disc list-inside space-y-1">
-          <li>Bluetooth y USB requieren navegadores basados en Chromium (Chrome, Edge).</li>
-          <li>Asegúrate de que el sitio use HTTPS (excepto en localhost).</li>
-          <li>Si el error persiste, verifica que "Web Bluetooth" esté habilitado en chrome://flags.</li>
-        </ul>
+        <p className="text-xs text-zinc-400 leading-relaxed">
+          Al dar clic en "Imprimir" en el POS, el navegador abre el diálogo de impresión del sistema.
+          Selecciona tu impresora térmica ahí. Si quieres que no aparezca el diálogo cada vez,
+          configura esa impresora como predeterminada en tu PC o Mac.
+        </p>
       </div>
     </div>
   );

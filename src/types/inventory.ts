@@ -74,6 +74,8 @@ export interface Product {
   name: string;
   type: ProductType;
   price: number;
+  wholesale_price_1?: number;
+  wholesale_price_2?: number;
   cost_price?: number;
   stock: number;
   min_stock_alert: number;

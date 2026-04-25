@@ -3,6 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { User, Phone, AlertTriangle } from "lucide-react";
 import { EditCustomerModal } from "./EditCustomerModal";
+import { useRouter } from "next/navigation";
 
 interface CustomerTableProps {
   customers: any[];
@@ -10,6 +11,7 @@ interface CustomerTableProps {
 }
 
 export function CustomerTable({ customers, canEdit = false }: CustomerTableProps) {
+  const router = useRouter();
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -36,7 +38,15 @@ export function CustomerTable({ customers, canEdit = false }: CustomerTableProps
               const isOverLimit = customer.current_debt > customer.credit_limit && customer.credit_limit > 0;
 
               return (
-                <TableRow key={customer.id} className="group transition-colors hover:bg-gray-50/50">
+                <TableRow
+                  key={customer.id}
+                  className="group transition-colors hover:bg-gray-50/50 cursor-pointer"
+                  onClick={(e) => {
+                    // No navegar si el click fue en el botón de editar
+                    if ((e.target as HTMLElement).closest('[data-edit-btn]')) return;
+                    router.push(`/customers/${customer.id}`);
+                  }}
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="p-2 border border-gray-200 group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
@@ -79,8 +89,10 @@ export function CustomerTable({ customers, canEdit = false }: CustomerTableProps
                     </span>
                   </TableCell>
                   {canEdit && (
-                    <TableCell className="text-center">
-                      <EditCustomerModal customer={customer} />
+                    <TableCell className="text-center" data-edit-btn>
+                      <div data-edit-btn>
+                        <EditCustomerModal customer={customer} />
+                      </div>
                     </TableCell>
                   )}
                 </TableRow>

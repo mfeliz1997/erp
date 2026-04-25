@@ -8,7 +8,7 @@ import type { MenuItem, SubMenuItem } from '@/components/dashboard/Sidebar';
 import type { UserRole } from '@/types/auth';
 import {
   Package, ShoppingBag, ScrollText,
-  Users, Landmark,
+  Users, Landmark, Tag,
   BarChart2, ShieldCheck, Activity, Settings,
 } from 'lucide-react';
 
@@ -35,8 +35,9 @@ export const ALL_MENU_ITEMS: MenuItem[] = [
     name: 'Finanzas',
     icon: '💸',
     subItems: [
-      { name: 'Clientes',            path: '/customers', icon: <Users    className="w-3.5 h-3.5" /> },
-      { name: 'Cuentas por Cobrar',  path: '/debts',     icon: <Landmark className="w-3.5 h-3.5" /> },
+      { name: 'Clientes',            path: '/customers',  icon: <Users    className="w-3.5 h-3.5" /> },
+      { name: 'Cuentas por Cobrar',  path: '/debts',      icon: <Landmark className="w-3.5 h-3.5" /> },
+      { name: 'Descuentos',          path: '/discounts',  icon: <Tag      className="w-3.5 h-3.5" /> },
     ],
   },
 

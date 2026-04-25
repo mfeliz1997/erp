@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { toast } from 'sonner';
-import { UserPlus, ShieldCheck, Phone, Lock, User, Loader2, KeyRound, CreditCard, Landmark, Clock, Monitor, ShoppingBag, Users } from "lucide-react";
+import { UserPlus, ShieldCheck, Phone, Lock, User, Loader2, KeyRound, CreditCard, Landmark, Clock, Monitor, ShoppingBag, Users, Tag } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { UserRole } from '@/types/auth';
 import { ALL_ROUTES, ROLE_DEFAULT_ROUTES } from '@/types/auth';
@@ -30,6 +30,7 @@ export function EmployeeForm({ tenantDomain, registers }: { tenantDomain: string
   const [canUseTransfer, setCanUseTransfer]       = useState(false);
   const [canSellWithoutShift, setCanSellWithoutShift] = useState(false);
   const [canEditCustomers, setCanEditCustomers]       = useState(false);
+  const [canApplyDiscount, setCanApplyDiscount]       = useState(false);
   const [assignedRegisterId, setAssignedRegisterId]   = useState<string>('none');
   const [newCredentials, setNewCredentials] = useState<{ name: string; email: string; pass: string } | null>(null);
 
@@ -57,6 +58,7 @@ export function EmployeeForm({ tenantDomain, registers }: { tenantDomain: string
     formData.set('can_use_transfer', String(canUseTransfer));
     formData.set('can_sell_without_shift', String(canSellWithoutShift));
     formData.set('can_edit_customers', String(canEditCustomers));
+    formData.set('can_apply_discount', String(canApplyDiscount));
     formData.set('assigned_register_id', assignedRegisterId === 'none' ? '' : assignedRegisterId);
 
     const rawName = formData.get('name') as string;
@@ -75,6 +77,7 @@ export function EmployeeForm({ tenantDomain, registers }: { tenantDomain: string
       setCanUseTransfer(false);
       setCanSellWithoutShift(false);
       setCanEditCustomers(false);
+      setCanApplyDiscount(false);
       setAssignedRegisterId('none');
       setNewCredentials({ name: rawName, email: generatedEmail, pass: rawPass });
     } else {
@@ -278,6 +281,18 @@ export function EmployeeForm({ tenantDomain, registers }: { tenantDomain: string
               </div>
             </div>
             <Switch checked={canEditCustomers} onCheckedChange={setCanEditCustomers} />
+          </div>
+
+          {/* Apply discount */}
+          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center gap-3">
+              <Tag className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-xs font-semibold">Aplicar Descuentos</p>
+                <p className="text-xs text-gray-400">Puede aplicar descuentos en el POS</p>
+              </div>
+            </div>
+            <Switch checked={canApplyDiscount} onCheckedChange={setCanApplyDiscount} />
           </div>
         </div>
 
