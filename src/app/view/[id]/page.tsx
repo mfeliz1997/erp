@@ -9,9 +9,10 @@ export default async function PublicInvoicePage({
   const { id } = await params;
   const supabase = await createClient();
 
+  // invoices: política RLS pública "Public read invoice by id" permite SELECT a anon
   const { data: invoice, error } = await supabase
     .from("invoices")
-    .select("*, tenants(name, rnc, logo_url)")
+    .select("id, created_at, ncf, customer_name, subtotal, discount_amount, discount_name, total, tenant_id")
     .eq("id", id)
     .single();
 
@@ -19,12 +20,13 @@ export default async function PublicInvoicePage({
     notFound();
   }
 
-  const { data: items } = await supabase
-    .from("invoice_items")
-    .select("product_name, quantity, unit_price, total")
-    .eq("invoice_id", id);
+  // invoice_items y tenants: acceso vía SECURITY DEFINER functions (anon no toca las tablas directamente)
+  const [{ data: items }, { data: tenantRows }] = await Promise.all([
+    supabase.rpc("get_invoice_items_public", { p_invoice_id: id }),
+    supabase.rpc("get_tenant_public", { p_tenant_id: invoice.tenant_id }),
+  ]);
 
-  const tenant = invoice.tenants;
+  const tenant = tenantRows?.[0];
 
   return (
     <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
@@ -32,10 +34,15 @@ export default async function PublicInvoicePage({
 
         {/* Header */}
         <div className="bg-slate-900 p-6 text-center text-white">
-          <h1 className="text-2xl font-bold">{tenant?.name || "Negocio"}</h1>
-          {tenant?.rnc && (
-            <p className="text-sm text-slate-400 mt-1">RNC: {tenant.rnc}</p>
+          {tenant?.logo_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={tenant.logo_url}
+              alt={tenant.name}
+              className="h-12 w-auto mx-auto mb-3 object-contain"
+            />
           )}
+          <h1 className="text-2xl font-bold">{tenant?.name || "Negocio"}</h1>
         </div>
 
         {/* Info Fiscal */}
@@ -75,7 +82,7 @@ export default async function PublicInvoicePage({
           </h3>
           {items && items.length > 0 ? (
             <ul className="space-y-3">
-              {items.map((item, i) => (
+              {items.map((item: { product_name: string; quantity: number; unit_price: number; total: number }, i: number) => (
                 <li key={i} className="flex justify-between text-sm">
                   <span className="text-slate-700">
                     {item.quantity}x {item.product_name}
@@ -99,7 +106,9 @@ export default async function PublicInvoicePage({
               <span>RD$ {invoice.subtotal?.toLocaleString("es-DO")}</span>
             </div>
             <div className="flex justify-between text-sm mt-1 text-red-500">
-              <span>Descuento{invoice.discount_name ? ` (${invoice.discount_name})` : ""}:</span>
+              <span>
+                Descuento{invoice.discount_name ? ` (${invoice.discount_name})` : ""}:
+              </span>
               <span>- RD$ {invoice.discount_amount.toLocaleString("es-DO")}</span>
             </div>
           </div>
