@@ -511,10 +511,10 @@ export function CustomerSelector({
                     className="h-8 pl-7 text-sm"
                   />
                 </div>
-                <Button 
-                  type="button" 
-                  variant="secondary" 
-                  className="h-8 px-2.5" 
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="h-8 px-2.5"
                   onClick={handleRncLookup}
                   disabled={isLookingUp || !value.rnc || value.rnc.length < 9}
                   title="Buscar en DGII o Clientes"
