@@ -12,40 +12,88 @@ interface CustomerTableProps {
 
 export function CustomerTable({ customers, canEdit = false }: CustomerTableProps) {
   const router = useRouter();
-  return (
-    <div className="overflow-x-auto">
-      <Table>
-        <TableHeader className="bg-gray-50 border-b border-gray-200">
-          <TableRow>
-            <TableHead className="text-xs font-semibold py-4 text-black">Cliente</TableHead>
-            <TableHead className="text-xs font-semibold text-black hidden md:table-cell">Documento / RNC</TableHead>
-            <TableHead className="text-xs font-semibold text-right text-black">Crédito / Deuda</TableHead>
-            <TableHead className="text-xs font-semibold text-center text-black">Estado</TableHead>
-            {canEdit && (
-              <TableHead className="text-xs font-semibold text-center text-black w-12"></TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {customers.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={canEdit ? 5 : 4} className="text-center py-24 text-xs font-semibold text-gray-400">
-                No hay clientes registrados en el directorio.
-              </TableCell>
-            </TableRow>
-          ) : (
-            customers.map((customer) => {
-              const isOverLimit = customer.current_debt > customer.credit_limit && customer.credit_limit > 0;
 
+  if (customers.length === 0) {
+    return (
+      <div className="text-center py-24 text-xs font-semibold text-gray-400">
+        No hay clientes registrados en el directorio.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {/* ── Mobile: lista de cards ── */}
+      <div className="md:hidden divide-y divide-gray-100">
+        {customers.map((customer) => {
+          const isOverLimit = customer.current_debt > customer.credit_limit && customer.credit_limit > 0;
+          return (
+            <div
+              key={customer.id}
+              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 cursor-pointer"
+              onClick={() => router.push(`/customers/${customer.id}`)}
+            >
+              <div className="p-2 border border-gray-200 shrink-0">
+                <User className="w-4 h-4" />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-xs text-black truncate">{customer.name}</p>
+                {customer.company_name && (
+                  <p className="text-[10px] text-blue-600 font-semibold truncate">{customer.company_name}</p>
+                )}
+                <p className="text-[10px] text-gray-400 font-bold flex items-center gap-1 mt-0.5">
+                  <Phone className="w-3 h-3" /> {customer.phone || 'SIN TELÉFONO'}
+                </p>
+              </div>
+
+              <div className="shrink-0 text-right">
+                <div className="flex items-center justify-end gap-1">
+                  {isOverLimit && <AlertTriangle className="w-3 h-3 text-red-600" />}
+                  <span className={`text-xs font-bold tabular-nums ${isOverLimit ? 'text-red-600' : 'text-black'}`}>
+                    RD$ {Number(customer.current_debt ?? 0).toLocaleString()}
+                  </span>
+                </div>
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold border-2 mt-1
+                    ${isOverLimit ? 'bg-red-600 text-white border-black' : 'bg-gray-100 text-gray-400 border-transparent'}`}
+                >
+                  {isOverLimit ? "Excedido" : "Al día"}
+                </span>
+              </div>
+
+              {canEdit && (
+                <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+                  <EditCustomerModal customer={customer} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Desktop: tabla ── */}
+      <div className="hidden md:block overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-gray-50 border-b border-gray-200">
+            <TableRow>
+              <TableHead className="text-xs font-semibold py-4 text-black">Cliente</TableHead>
+              <TableHead className="text-xs font-semibold text-black hidden md:table-cell">Documento / RNC</TableHead>
+              <TableHead className="text-xs font-semibold text-right text-black">Crédito / Deuda</TableHead>
+              <TableHead className="text-xs font-semibold text-center text-black">Estado</TableHead>
+              {canEdit && (
+                <TableHead className="text-xs font-semibold text-center text-black w-12"></TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {customers.map((customer) => {
+              const isOverLimit = customer.current_debt > customer.credit_limit && customer.credit_limit > 0;
               return (
                 <TableRow
                   key={customer.id}
                   className="group transition-colors hover:bg-gray-50/50 cursor-pointer"
-                  onClick={(e) => {
-                    // No navegar si el click fue en el botón de editar
-                    if ((e.target as HTMLElement).closest('[data-edit-btn]')) return;
-                    router.push(`/customers/${customer.id}`);
-                  }}
+                  onClick={() => router.push(`/customers/${customer.id}`)}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -89,18 +137,19 @@ export function CustomerTable({ customers, canEdit = false }: CustomerTableProps
                     </span>
                   </TableCell>
                   {canEdit && (
-                    <TableCell className="text-center" data-edit-btn>
-                      <div data-edit-btn>
-                        <EditCustomerModal customer={customer} />
-                      </div>
+                    <TableCell
+                      className="text-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <EditCustomerModal customer={customer} />
                     </TableCell>
                   )}
                 </TableRow>
               );
-            })
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }

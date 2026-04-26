@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase";
 import { notFound, redirect } from "next/navigation";
 import {
-  ArrowLeft, User, Phone, FileText, Wallet,
+  ArrowLeft, Wallet,
   CreditCard, Landmark, Clock, ShoppingBag,
   CheckCircle2, AlertTriangle, Receipt,
 } from "lucide-react";
 import Link from "next/link";
+import { CustomerDetailHeader } from "@/modules/customers/components/CustomerDetailHeader";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -49,10 +50,12 @@ export default async function CustomerDetailPage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tenant_id")
+    .select("tenant_id, role, can_edit_customers")
     .eq("id", user.id)
     .single();
   if (!profile) redirect("/login");
+
+  const canEdit = profile.role === "admin" || profile.can_edit_customers === true;
 
   // ── Datos del cliente ────────────────────────────────────────────────────────
   const { data: customer } = await supabase
@@ -108,7 +111,7 @@ export default async function CustomerDetailPage({
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8 pb-20">
+    <div className="p-3 sm:p-6 max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-20">
 
       {/* Back */}
       <Link
@@ -118,48 +121,12 @@ export default async function CustomerDetailPage({
         <ArrowLeft className="w-4 h-4" /> Volver a clientes
       </Link>
 
-      {/* Header del cliente */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col sm:flex-row gap-6 items-start">
-        <div className="p-4 bg-black text-white shrink-0">
-          <User className="w-7 h-7" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-semibold leading-none">{customer.name}</h1>
-          {customer.company_name && (
-            <p className="text-sm text-blue-600 font-semibold mt-1">{customer.company_name}</p>
-          )}
-          <div className="flex flex-wrap gap-4 mt-3 text-xs font-semibold text-gray-500">
-            {customer.phone && (
-              <span className="flex items-center gap-1">
-                <Phone className="w-3.5 h-3.5" /> {customer.phone}
-              </span>
-            )}
-            {customer.tax_id && (
-              <span className="flex items-center gap-1">
-                <FileText className="w-3.5 h-3.5" /> {customer.tax_type} {customer.tax_id}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* KPIs */}
-        <div className="grid grid-cols-3 gap-4 shrink-0 text-center">
-          <div>
-            <p className="text-2xl font-bold">{(invoices ?? []).length}</p>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Compras</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold">{fmt(totalSpent)}</p>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Total gastado</p>
-          </div>
-          <div>
-            <p className={`text-2xl font-bold ${customer.current_debt > 0 ? "text-red-600" : "text-emerald-600"}`}>
-              {fmt(customer.current_debt ?? 0)}
-            </p>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Deuda activa</p>
-          </div>
-        </div>
-      </div>
+      <CustomerDetailHeader
+        customer={customer}
+        totalSpent={totalSpent}
+        invoiceCount={(invoices ?? []).length}
+        canEdit={canEdit}
+      />
 
       {/* Historial de compras */}
       <section className="space-y-3">
