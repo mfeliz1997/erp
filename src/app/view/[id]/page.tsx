@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase";
 import { notFound } from "next/navigation";
 
+// Una factura nunca cambia — se cachea indefinidamente en el CDN de Vercel
+export const revalidate = false;
+
 export default async function PublicInvoicePage({
   params,
 }: {
