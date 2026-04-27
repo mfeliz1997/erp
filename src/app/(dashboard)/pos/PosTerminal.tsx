@@ -83,12 +83,9 @@ export default function PosTerminal({ initialProducts, profile, openShiftName, d
   const [isSuccessModalOpen, setIsSuccessModalOpen]   = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [lastInvoiceData, setLastInvoiceData] = useState<any>(null);
-  // Mobile sheet — starts closed to avoid overlay flash on desktop
-  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
-
-  useEffect(() => {
-    if (window.innerWidth < 768) setMobileSheetOpen(true);
-  }, []);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth < 768
+  );
 
   // ── Carrito: estado del pago ───────────────────────────────────────────────
   const [selectedCustomer, setSelectedCustomer] = useState<SelectedCustomer | null>(null);
